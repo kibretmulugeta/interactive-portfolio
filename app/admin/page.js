@@ -14,6 +14,11 @@ export default function AdminDashboardPage() {
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileMessage, setProfileMessage] = useState(null);
 
+  // Resume Upload State
+  const [selectedPdfFile, setSelectedPdfFile] = useState(null);
+  const [uploadingResume, setUploadingResume] = useState(false);
+  const [resumeUploadMessage, setResumeUploadMessage] = useState(null);
+
   // Blogs & Analytics State
   const [blogs, setBlogs] = useState([]);
   const [loadingBlogs, setLoadingBlogs] = useState(true);
@@ -76,6 +81,38 @@ export default function AdminDashboardPage() {
       setInquiriesError(err.message);
     } finally {
       setLoadingInquiries(false);
+    }
+  };
+
+  // Resume PDF File Upload Handler
+  const handleResumePdfUpload = async (e) => {
+    e.preventDefault();
+    if (!selectedPdfFile) {
+      alert('Please select a PDF file first.');
+      return;
+    }
+
+    setUploadingResume(true);
+    setResumeUploadMessage(null);
+
+    const formData = new FormData();
+    formData.append('file', selectedPdfFile);
+
+    try {
+      const res = await fetch('/api/admin/resume', {
+        method: 'POST',
+        body: formData,
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || 'Failed to upload PDF.');
+
+      setResumeUploadMessage({ type: 'success', text: 'PDF Resume uploaded and set as active download!' });
+      setSelectedPdfFile(null);
+      fetchProfileCMS();
+    } catch (err) {
+      setResumeUploadMessage({ type: 'error', text: err.message });
+    } finally {
+      setUploadingResume(false);
     }
   };
 
@@ -326,7 +363,7 @@ export default function AdminDashboardPage() {
               </div>
             </div>
 
-            {/* TAB 1: PROFILE & RESUME MANAGEMENT + DOWNLOAD NOTIFICATION LOGS */}
+            {/* TAB 1: PROFILE & RESUME MANAGEMENT + PDF FILE UPLOAD */}
             {activeTab === 'profile' && (
               <div>
                 {/* Resume Downloads Notification Summary Cards */}
@@ -345,6 +382,37 @@ export default function AdminDashboardPage() {
                       {downloadLogs.length > 0 ? new Date(downloadLogs[downloadLogs.length - 1].downloadedAt).toLocaleString() : 'No downloads recorded yet'}
                     </h4>
                   </div>
+                </div>
+
+                {/* Direct PDF Resume File Upload Card */}
+                <div className="card" style={{ padding: '2rem', marginBottom: '2rem', border: '1px solid var(--accent-color)' }}>
+                  <h3 style={{ fontSize: '1.3rem', marginBottom: '0.5rem', color: 'var(--accent-light)' }}>
+                    <i className="fa-solid fa-file-pdf" style={{ marginRight: '0.5rem' }}></i>
+                    Upload Resume in PDF Format
+                  </h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
+                    Select a new PDF file from your device to upload and set as the active downloadable CV for all clients.
+                  </p>
+
+                  {resumeUploadMessage && (
+                    <div style={{ padding: '0.75rem 1rem', borderRadius: '8px', marginBottom: '1rem', background: resumeUploadMessage.type === 'success' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)', color: resumeUploadMessage.type === 'success' ? '#4ade80' : '#f87171' }}>
+                      {resumeUploadMessage.text}
+                    </div>
+                  )}
+
+                  <form onSubmit={handleResumePdfUpload} style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <input
+                      type="file"
+                      accept=".pdf,application/pdf"
+                      onChange={(e) => setSelectedPdfFile(e.target.files[0])}
+                      style={{ padding: '0.5rem', background: 'var(--bg-secondary)', border: '1px solid var(--card-border)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                      required
+                    />
+                    <button type="submit" className="pill-btn" disabled={uploadingResume || !selectedPdfFile} style={{ background: 'var(--accent-color)', color: '#fff' }}>
+                      <i className="fa-solid fa-cloud-arrow-up"></i>
+                      <span>{uploadingResume ? 'Uploading PDF...' : 'Upload PDF Resume'}</span>
+                    </button>
+                  </form>
                 </div>
 
                 {/* Live Download Activity Log Feed */}
