@@ -95,12 +95,19 @@ export async function DELETE(req) {
 
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
+    const clearAll = searchParams.get('clearAll');
+
+    await connectToDatabase();
+
+    if (clearAll === 'true') {
+      await BlogPost.deleteMany({});
+      return NextResponse.json({ success: true, message: 'All blog posts cleared.' });
+    }
 
     if (!id) {
       return NextResponse.json({ error: 'Blog ID is required.' }, { status: 400 });
     }
 
-    await connectToDatabase();
     await BlogPost.findByIdAndDelete(id);
 
     return NextResponse.json({ success: true, message: 'Blog post deleted.' });

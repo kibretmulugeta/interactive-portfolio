@@ -285,6 +285,18 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const handleClearAllBlogs = async () => {
+    if (!confirm('Are you sure you want to clear ALL blog posts from MongoDB? This will remove sample seed posts so you can write custom posts.')) return;
+    try {
+      const res = await fetch('/api/admin/blogs?clearAll=true', { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed to clear blogs');
+      setBlogMessage({ type: 'success', text: 'All sample blog posts cleared! You can now write custom posts.' });
+      fetchBlogs();
+    } catch (err) {
+      alert(`Error: ${err.message}`);
+    }
+  };
+
   const updateInquiryStatus = async (id, newStatus) => {
     try {
       const res = await fetch('/api/admin/inquiries', {
@@ -731,7 +743,7 @@ export default function AdminDashboardPage() {
               <div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
                   <div className="card" style={{ padding: '1.5rem' }}>
-                    <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Published Blog Articles</span>
+                    <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Custom Published Articles</span>
                     <h2 style={{ fontSize: '2rem', marginTop: '0.25rem' }}>{blogs.length}</h2>
                   </div>
                   <div className="card" style={{ padding: '1.5rem' }}>
@@ -747,7 +759,7 @@ export default function AdminDashboardPage() {
                 {editingBlog ? (
                   <div className="card" style={{ padding: '2.5rem', marginBottom: '2.5rem', border: '1px solid var(--accent-color)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                      <h3 style={{ fontSize: '1.4rem', color: 'var(--accent-light)' }}>Edit Article: {editingBlog.title}</h3>
+                      <h3 style={{ fontSize: '1.4rem', color: 'var(--accent-light)' }}>Edit Custom Article: {editingBlog.title}</h3>
                       <button onClick={() => setEditingBlog(null)} className="pill-btn outlined-btn">Cancel Editing</button>
                     </div>
 
@@ -827,9 +839,16 @@ export default function AdminDashboardPage() {
                     </form>
                   </div>
                 ) : (
-                  /* Write New Article Form */
+                  /* Write New Custom Article Form */
                   <div className="card" style={{ padding: '2.5rem', marginBottom: '2.5rem' }}>
-                    <h3 style={{ fontSize: '1.4rem', marginBottom: '1.5rem' }}>Publish New Technical / Aesthetic Article</h3>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+                      <h3 style={{ fontSize: '1.4rem' }}>Create Custom Technical / Aesthetic Article</h3>
+                      {blogs.length > 0 && (
+                        <button onClick={handleClearAllBlogs} className="pill-btn outlined-btn" style={{ borderColor: '#f87171', color: '#f87171' }}>
+                          <i className="fa-solid fa-trash-can"></i> Clear All Pre-seeded Posts
+                        </button>
+                      )}
+                    </div>
 
                     {blogMessage && (
                       <div style={{ padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', background: blogMessage.type === 'success' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)', color: blogMessage.type === 'success' ? '#4ade80' : '#f87171' }}>
@@ -916,7 +935,7 @@ export default function AdminDashboardPage() {
 
                       <button type="submit" className="submit-btn" disabled={publishingBlog} style={{ marginTop: '1.5rem' }}>
                         <i className="fa-solid fa-paper-plane"></i>
-                        <span>{publishingBlog ? 'Publishing Post...' : 'Publish Blog Post Live'}</span>
+                        <span>{publishingBlog ? 'Publishing Post...' : 'Publish Custom Article Live'}</span>
                       </button>
                     </form>
                   </div>
@@ -927,7 +946,7 @@ export default function AdminDashboardPage() {
                   {loadingBlogs ? (
                     <div style={{ padding: '2rem', textAlign: 'center' }}>Loading blog articles...</div>
                   ) : blogs.length === 0 ? (
-                    <div style={{ padding: '2rem', textAlign: 'center' }}>No blog posts written yet.</div>
+                    <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>No custom articles written yet. Write your first article above!</div>
                   ) : (
                     <table className="admin-table">
                       <thead>
