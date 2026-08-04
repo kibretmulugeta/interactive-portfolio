@@ -23,6 +23,7 @@ export default function AdminDashboardPage() {
   const [blogs, setBlogs] = useState([]);
   const [loadingBlogs, setLoadingBlogs] = useState(true);
   const [newBlog, setNewBlog] = useState({ title: '', excerpt: '', content: '', readTime: '5 min read' });
+  const [editingBlog, setEditingBlog] = useState(null); // Currently selected blog for editing
   const [publishingBlog, setPublishingBlog] = useState(false);
   const [blogMessage, setBlogMessage] = useState(null);
 
@@ -106,7 +107,7 @@ export default function AdminDashboardPage() {
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || 'Failed to upload PDF.');
 
-      setResumeUploadMessage({ type: 'success', text: 'PDF Resume uploaded and set as active download!' });
+      setResumeUploadMessage({ type: 'success', text: 'PDF Resume uploaded and stored in MongoDB!' });
       setSelectedPdfFile(null);
       fetchProfileCMS();
     } catch (err) {
@@ -193,6 +194,36 @@ export default function AdminDashboardPage() {
 
       setBlogMessage({ type: 'success', text: 'Blog post published successfully!' });
       setNewBlog({ title: '', excerpt: '', content: '', readTime: '5 min read' });
+      fetchBlogs();
+    } catch (err) {
+      setBlogMessage({ type: 'error', text: err.message });
+    } finally {
+      setPublishingBlog(false);
+    }
+  };
+
+  const handleUpdateBlog = async (e) => {
+    e.preventDefault();
+    if (!editingBlog) return;
+    setPublishingBlog(true);
+    setBlogMessage(null);
+    try {
+      const res = await fetch('/api/admin/blogs', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: editingBlog._id,
+          title: editingBlog.title,
+          excerpt: editingBlog.excerpt,
+          content: editingBlog.content,
+          readTime: editingBlog.readTime,
+        }),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || 'Failed to update blog post.');
+
+      setBlogMessage({ type: 'success', text: 'Article updated successfully!' });
+      setEditingBlog(null);
       fetchBlogs();
     } catch (err) {
       setBlogMessage({ type: 'error', text: err.message });
@@ -391,7 +422,7 @@ export default function AdminDashboardPage() {
                     Upload Resume in PDF Format
                   </h3>
                   <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
-                    Select a new PDF file from your device to upload and set as the active downloadable CV for all clients.
+                    Select a new PDF file from your device to upload and store safely in MongoDB.
                   </p>
 
                   {resumeUploadMessage && (
@@ -652,7 +683,7 @@ export default function AdminDashboardPage() {
               </div>
             )}
 
-            {/* TAB 3: BLOG ENGINE & VIEW ANALYTICS */}
+            {/* TAB 3: BLOG ENGINE & VIEW ANALYTICS + ARTICLE EDITING */}
             {activeTab === 'blogs' && (
               <div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
@@ -669,73 +700,135 @@ export default function AdminDashboardPage() {
                   </div>
                 </div>
 
-                <div className="card" style={{ padding: '2.5rem', marginBottom: '2.5rem' }}>
-                  <h3 style={{ fontSize: '1.4rem', marginBottom: '1.5rem' }}>Publish New Technical Article</h3>
-
-                  {blogMessage && (
-                    <div style={{ padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', background: blogMessage.type === 'success' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)', color: blogMessage.type === 'success' ? '#4ade80' : '#f87171' }}>
-                      {blogMessage.text}
+                {/* Edit Article Modal / Form when editingBlog is active */}
+                {editingBlog ? (
+                  <div className="card" style={{ padding: '2.5rem', marginBottom: '2.5rem', border: '1px solid var(--accent-color)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                      <h3 style={{ fontSize: '1.4rem', color: 'var(--accent-light)' }}>Edit Article: {editingBlog.title}</h3>
+                      <button onClick={() => setEditingBlog(null)} className="pill-btn outlined-btn">Cancel Editing</button>
                     </div>
-                  )}
 
-                  <form onSubmit={handlePublishBlog}>
-                    <div className="form-grid">
-                      <div className="form-group">
-                        <label htmlFor="blogTitle">Article Title</label>
+                    <form onSubmit={handleUpdateBlog}>
+                      <div className="form-grid">
+                        <div className="form-group">
+                          <label>Article Title</label>
+                          <input
+                            type="text"
+                            className="form-input"
+                            value={editingBlog.title}
+                            onChange={(e) => setEditingBlog({ ...editingBlog, title: e.target.value })}
+                            required
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Read Time</label>
+                          <input
+                            type="text"
+                            className="form-input"
+                            value={editingBlog.readTime}
+                            onChange={(e) => setEditingBlog({ ...editingBlog, readTime: e.target.value })}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="form-group" style={{ marginTop: '1rem' }}>
+                        <label>Short Excerpt / Teaser</label>
                         <input
                           type="text"
-                          id="blogTitle"
                           className="form-input"
-                          placeholder="e.g. Advancements in U-Net DICOM Segmentation"
-                          value={newBlog.title}
-                          onChange={(e) => setNewBlog({ ...newBlog, title: e.target.value })}
+                          value={editingBlog.excerpt}
+                          onChange={(e) => setEditingBlog({ ...editingBlog, excerpt: e.target.value })}
                           required
                         />
                       </div>
-                      <div className="form-group">
-                        <label htmlFor="readTime">Estimated Read Time</label>
+
+                      <div className="form-group" style={{ marginTop: '1rem' }}>
+                        <label>Article Content (Markdown / Text)</label>
+                        <textarea
+                          className="form-textarea"
+                          rows={12}
+                          value={editingBlog.content}
+                          onChange={(e) => setEditingBlog({ ...editingBlog, content: e.target.value })}
+                          required
+                        ></textarea>
+                      </div>
+
+                      <button type="submit" className="submit-btn" disabled={publishingBlog} style={{ marginTop: '1.5rem' }}>
+                        <i className="fa-solid fa-floppy-disk"></i>
+                        <span>{publishingBlog ? 'Saving Updates...' : 'Save Article Updates Live'}</span>
+                      </button>
+                    </form>
+                  </div>
+                ) : (
+                  /* Write New Article Form */
+                  <div className="card" style={{ padding: '2.5rem', marginBottom: '2.5rem' }}>
+                    <h3 style={{ fontSize: '1.4rem', marginBottom: '1.5rem' }}>Publish New Technical Article</h3>
+
+                    {blogMessage && (
+                      <div style={{ padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', background: blogMessage.type === 'success' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)', color: blogMessage.type === 'success' ? '#4ade80' : '#f87171' }}>
+                        {blogMessage.text}
+                      </div>
+                    )}
+
+                    <form onSubmit={handlePublishBlog}>
+                      <div className="form-grid">
+                        <div className="form-group">
+                          <label htmlFor="blogTitle">Article Title</label>
+                          <input
+                            type="text"
+                            id="blogTitle"
+                            className="form-input"
+                            placeholder="e.g. Advancements in U-Net DICOM Segmentation"
+                            value={newBlog.title}
+                            onChange={(e) => setNewBlog({ ...newBlog, title: e.target.value })}
+                            required
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label htmlFor="readTime">Estimated Read Time</label>
+                          <input
+                            type="text"
+                            id="readTime"
+                            className="form-input"
+                            value={newBlog.readTime}
+                            onChange={(e) => setNewBlog({ ...newBlog, readTime: e.target.value })}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="form-group" style={{ marginTop: '1rem' }}>
+                        <label htmlFor="excerpt">Short Excerpt / Teaser</label>
                         <input
                           type="text"
-                          id="readTime"
+                          id="excerpt"
                           className="form-input"
-                          value={newBlog.readTime}
-                          onChange={(e) => setNewBlog({ ...newBlog, readTime: e.target.value })}
+                          placeholder="Brief summary displayed on portfolio grid..."
+                          value={newBlog.excerpt}
+                          onChange={(e) => setNewBlog({ ...newBlog, excerpt: e.target.value })}
+                          required
                         />
                       </div>
-                    </div>
 
-                    <div className="form-group" style={{ marginTop: '1rem' }}>
-                      <label htmlFor="excerpt">Short Excerpt / Teaser</label>
-                      <input
-                        type="text"
-                        id="excerpt"
-                        className="form-input"
-                        placeholder="Brief summary displayed on portfolio grid..."
-                        value={newBlog.excerpt}
-                        onChange={(e) => setNewBlog({ ...newBlog, excerpt: e.target.value })}
-                        required
-                      />
-                    </div>
+                      <div className="form-group" style={{ marginTop: '1rem' }}>
+                        <label htmlFor="blogContent">Article Content</label>
+                        <textarea
+                          id="blogContent"
+                          className="form-textarea"
+                          rows={8}
+                          placeholder="Write your research article content here..."
+                          value={newBlog.content}
+                          onChange={(e) => setNewBlog({ ...newBlog, content: e.target.value })}
+                          required
+                        ></textarea>
+                      </div>
 
-                    <div className="form-group" style={{ marginTop: '1rem' }}>
-                      <label htmlFor="blogContent">Article Content</label>
-                      <textarea
-                        id="blogContent"
-                        className="form-textarea"
-                        rows={8}
-                        placeholder="Write your research article content here..."
-                        value={newBlog.content}
-                        onChange={(e) => setNewBlog({ ...newBlog, content: e.target.value })}
-                        required
-                      ></textarea>
-                    </div>
-
-                    <button type="submit" className="submit-btn" disabled={publishingBlog} style={{ marginTop: '1.5rem' }}>
-                      <i className="fa-solid fa-paper-plane"></i>
-                      <span>{publishingBlog ? 'Publishing Post...' : 'Publish Blog Post Live'}</span>
-                    </button>
-                  </form>
-                </div>
+                      <button type="submit" className="submit-btn" disabled={publishingBlog} style={{ marginTop: '1.5rem' }}>
+                        <i className="fa-solid fa-paper-plane"></i>
+                        <span>{publishingBlog ? 'Publishing Post...' : 'Publish Blog Post Live'}</span>
+                      </button>
+                    </form>
+                  </div>
+                )}
 
                 <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Blog Analytics & Reader Views</h3>
                 <div className="card admin-table-wrapper">
@@ -773,9 +866,14 @@ export default function AdminDashboardPage() {
                               {new Date(post.createdAt).toLocaleDateString()}
                             </td>
                             <td>
-                              <button onClick={() => handleDeleteBlog(post._id)} className="pill-btn outlined-btn" style={{ padding: '0.2rem 0.6rem', fontSize: '0.8rem', color: '#f87171' }}>
-                                <i className="fa-solid fa-trash"></i>
-                              </button>
+                              <div style={{ display: 'flex', gap: '0.3rem' }}>
+                                <button onClick={() => setEditingBlog(post)} className="pill-btn outlined-btn" style={{ padding: '0.2rem 0.6rem', fontSize: '0.8rem', color: 'var(--accent-light)' }}>
+                                  <i className="fa-solid fa-pen-to-square"></i> Edit
+                                </button>
+                                <button onClick={() => handleDeleteBlog(post._id)} className="pill-btn outlined-btn" style={{ padding: '0.2rem 0.6rem', fontSize: '0.8rem', color: '#f87171' }}>
+                                  <i className="fa-solid fa-trash"></i>
+                                </button>
+                              </div>
                             </td>
                           </tr>
                         ))}

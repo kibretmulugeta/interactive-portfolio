@@ -4,6 +4,38 @@ import BlogPost from '@/models/BlogPost';
 
 export const defaultBlogs = [
   {
+    title: 'Reward-Driven Neural Plasticity-Inspired Optimization for Enhancing U-Net Medical Image Segmentation',
+    slug: 'reward-driven-neural-plasticity-unet-segmentation',
+    excerpt: 'A novel biologically-inspired hyperparameter optimization framework for U-Net brain MRI segmentation achieving 99.72% accuracy and 18.32% faster convergence.',
+    content: `
+This thesis presents a novel biologically-inspired hyperparameter optimization framework for U-Net-based medical image segmentation. Focusing on brain MRI analysis, we address the critical challenge of suboptimal segmentation performance in conventional U-Net architectures, which often suffer from poor convergence (84.32% training accuracy) due to ineffective parameter tuning.
+
+### 1. Executive Summary & Core Discovery
+Our proposed reward-driven neural plasticity-inspired optimization algorithm mimics neuroadaptive processes to dynamically optimize learning parameters, achieving remarkable improvements (99.72% accuracy) while demonstrating superior computational efficiency compared to evolutionary approaches.
+
+Through rigorous experimentation on multi-institutional datasets, we demonstrate that the proposed model significantly outperforms baseline models across all metrics:
+- **Dice Similarity Score**: 0.8357 vs 0.0700
+- **Intersection over Union (IoU)**: 0.7618 vs 0.0188
+- **Convergence Speed**: 18.32% faster than conventional genetic algorithms while maintaining comparable validation accuracy (99.68% vs 99.70%).
+
+### 2. Biological Plausibility & Mathematical Formalization
+The framework's biological plausibility is mathematically formalized through synaptic strengthening and pruning mechanisms, offering new insights into machine learning optimization.
+
+### 3. Key Contributions
+1. **Neurophysiologically-Grounded Optimization**: A novel optimization paradigm inspired by biological synaptic plasticity.
+2. **Clinically-Validated Benchmarks**: Extensive validation on multi-institutional brain MRI segmentation datasets.
+3. **Adaptable Architecture**: Highly versatile framework applicable across diverse medical imaging diagnostic tasks.
+
+### 4. Conclusion & Future Directions
+The results highlight the model's potential to overcome local optima traps and premature convergence, critical limitations in current approaches. This work bridges computational neuroscience and deep learning, establishing a foundation for biologically-plausible AI in medical diagnostics while meeting stringent clinical reliability requirements. Future directions include quantum-enhanced optimization and 3D segmentation extensions.
+
+**Keywords**: Neural plasticity, hyperparameter optimization, medical image segmentation, U-Net architecture, biologically-inspired AI.
+    `,
+    author: 'Kibret Mulugeta',
+    readTime: '8 min read',
+    views: 245,
+  },
+  {
     title: 'Optimizing U-Net Architectures for High-Resolution Brain MRI Segmentation',
     slug: 'optimizing-unet-brain-mri-segmentation',
     excerpt: 'Exploring neural plasticity-inspired loss functions and MONAI PyTorch optimizations for precise clinical MRI tissue segmentation.',
@@ -30,27 +62,10 @@ class PlasticityWeightedLoss(nn.Module):
         edge_weight = torch.abs(pred - target)
         return dice_loss + self.alpha * edge_weight.mean()
 \`\`\`
-
-### 3. Conclusion & Open Source Framework
-By leveraging PyTorch and the MONAI framework, clinical researchers can deploy scalable DICOM segmentation microservices with real-time inference speed.
     `,
     author: 'Kibret Mulugeta',
     readTime: '6 min read',
     views: 142,
-  },
-  {
-    title: 'Reward-Driven Synaptic Reinforcement in Deep Learning Optimization',
-    slug: 'reward-driven-synaptic-reinforcement',
-    excerpt: 'How principles of neurobiology can inspire next-generation optimization algorithms in medical computer vision.',
-    content: `
-Artificial Neural Networks (ANNs) have drawn foundational concepts from biological brains, yet standard backpropagation algorithm updates remain static compared to dynamic brain plasticity.
-
-### Synaptic Plasticity in ML
-In biological brains, Hebbian learning asserts that "neurons that fire together, wire together." Integrating reward-driven feedback loops into deep learning loss landscapes yields higher generalization scores across noisy DICOM datasets.
-    `,
-    author: 'Kibret Mulugeta',
-    readTime: '4 min read',
-    views: 89,
   },
 ];
 
