@@ -4,21 +4,32 @@ const ProfileConfigSchema = new mongoose.Schema(
   {
     hero: {
       name: { type: String, default: 'Kibret Mulugeta' },
-      title: { type: String, default: 'AI Engineer | Medical Imaging Researcher' },
+      title: { type: String, default: 'AI ENGINEER | MACHINE LEARNING ENGINEER | FULL-STACK DEVELOPER' },
       bio: {
         type: String,
         default:
-          'Passionate about designing cutting-edge deep learning solutions for complex healthcare challenges. Specialized in U-Net brain MRI segmentation and reward-driven neural plasticity-inspired optimization algorithms to enhance diagnostic precision and algorithmic learning efficiency.',
+          'AI Engineer, Machine Learning Engineer, Full-Stack Developer, and Systems Engineer with an MSc in Computer Engineering specializing in Artificial Intelligence and Data Engineering. Experienced in designing intelligent systems, developing deep learning models, building full-stack web applications, and deploying scalable software solutions.',
       },
       photoUrl: { type: String, default: '/assets/images/kibret_photo.jpg' },
-      resumeUrl: { type: String, default: '/assets/Kibret_Mulugeta_Resume.pdf' },
+      resumeUrl: { type: String, default: '/api/resume/download' },
       badgeText: { type: String, default: 'Available for Research & Contracting' },
-      githubUrl: { type: String, default: 'https://github.com' },
-      linkedinUrl: { type: String, default: 'https://linkedin.com' },
+      githubUrl: { type: String, default: 'https://github.com/kibretmulugeta' },
+      linkedinUrl: { type: String, default: 'https://linkedin.com/in/kibret-mulugeta' },
       scholarUrl: { type: String, default: 'https://scholar.google.com' },
       twitterUrl: { type: String, default: 'https://twitter.com' },
-      email: { type: String, default: 'kibret.mulugeta@example.com' },
+      email: { type: String, default: 'kibretmail@gmail.com' },
     },
+    resumeDownloads: {
+      type: Number,
+      default: 0,
+    },
+    resumeDownloadLogs: [
+      {
+        downloadedAt: { type: Date, default: Date.now },
+        ip: { type: String, default: 'Anonymous Visitor' },
+        userAgent: String,
+      },
+    ],
     projects: [
       {
         title: String,

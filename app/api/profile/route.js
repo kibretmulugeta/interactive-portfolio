@@ -5,32 +5,70 @@ import ProfileConfig from '@/models/ProfileConfig';
 export const defaultProfileData = {
   hero: {
     name: 'Kibret Mulugeta',
-    title: 'AI Engineer | Medical Imaging Researcher',
-    bio: 'Passionate about designing cutting-edge deep learning solutions for complex healthcare challenges. Specialized in U-Net brain MRI segmentation and reward-driven neural plasticity-inspired optimization algorithms to enhance diagnostic precision and algorithmic learning efficiency.',
+    title: 'AI ENGINEER | MACHINE LEARNING ENGINEER | FULL-STACK DEVELOPER',
+    bio: 'AI Engineer, Machine Learning Engineer, Full-Stack Developer, and Systems Engineer with an MSc in Computer Engineering specializing in Artificial Intelligence and Data Engineering. Experienced in designing intelligent systems, developing deep learning models, building full-stack web applications, and deploying scalable software solutions.',
     photoUrl: '/assets/images/kibret_photo.jpg',
+    resumeUrl: '/api/resume/download',
     badgeText: 'Available for Research & Contracting',
-    githubUrl: 'https://github.com',
-    linkedinUrl: 'https://linkedin.com',
+    githubUrl: 'https://github.com/kibretmulugeta',
+    linkedinUrl: 'https://linkedin.com/in/kibret-mulugeta',
     scholarUrl: 'https://scholar.google.com',
     twitterUrl: 'https://twitter.com',
-    email: 'kibret.mulugeta@example.com',
+    email: 'kibretmail@gmail.com',
   },
+  resumeDownloads: 18,
+  resumeDownloadLogs: [
+    { downloadedAt: new Date(Date.now() - 3600000 * 2), ip: 'Client Visitor (Addis Ababa)', userAgent: 'Chrome / macOS' },
+    { downloadedAt: new Date(Date.now() - 3600000 * 5), ip: 'Research Collaborator', userAgent: 'Safari / iOS' },
+  ],
   projects: [
     {
-      title: 'ScholarXIV',
-      description: 'An AI-powered academic paper analysis and discovery engine engineered for medical researchers. Integrates automatic neural citation graphs, bio-medical paper summarization, and interactive brain MRI annotation visualizers.',
+      title: 'Medical Image Analysis System',
+      description: 'Developed deep learning models for medical image understanding and automated diagnosis support. Focused on Brain MRI analysis, medical image segmentation (U-Net, MONAI), and deep learning optimization.',
       image: '/assets/images/scholarxiv.png',
-      tags: ['PyTorch', 'MONAI', 'NLP & Vision', 'FastAPI'],
+      tags: ['U-Net', 'MONAI', 'PyTorch', 'TensorFlow', 'Brain MRI'],
       liveUrl: '#',
-      githubUrl: 'https://github.com',
+      githubUrl: 'https://github.com/kibretmulugeta',
     },
     {
-      title: 'OpenScholarXIV',
-      description: 'An open-source ecosystem providing pre-trained reward-driven U-Net segmentation models for brain MRI scanning datasets. Features plug-and-play neural plasticity optimization modules decreasing training convergence times by up to 35%.',
+      title: 'Novel Optimization Algorithm Design',
+      description: 'Designed and implemented novel optimization algorithms inspired by biological intelligence and neural adaptation mechanisms applied to Machine Learning optimization and engineering problems.',
       image: '/assets/images/openscholarxiv.png',
-      tags: ['U-Net', 'Brain MRI', 'Neural Plasticity', 'Open Data'],
+      tags: ['Neural Plasticity', 'Deep Learning', 'PyTorch', 'Optimization'],
       liveUrl: '#',
-      githubUrl: 'https://github.com',
+      githubUrl: 'https://github.com/kibretmulugeta',
+    },
+    {
+      title: 'Speech Intelligence & Translation Systems',
+      description: 'Developed AI applications including Speech-to-Text conversion, Text-to-Speech generation, and Amharic ↔ English machine translation models using advanced NLP architectures.',
+      image: '/assets/images/event_2.png',
+      tags: ['NLP', 'Speech Processing', 'Amharic Translation', 'PyTorch'],
+      liveUrl: '#',
+      githubUrl: 'https://github.com/kibretmulugeta',
+    },
+    {
+      title: 'CCTV Intelligent Analysis & Face Recognition',
+      description: 'Designed real-time solutions for monitoring CCTV video streams with capabilities in object detection, activity analysis, and AI-based face recognition for identity verification.',
+      image: '/assets/images/event_3.png',
+      tags: ['CNN', 'OpenCV', 'Computer Vision', 'Face Recognition'],
+      liveUrl: '#',
+      githubUrl: 'https://github.com/kibretmulugeta',
+    },
+    {
+      title: 'OCR (Optical Character Recognition) System',
+      description: 'Built an intelligent OCR pipeline for extracting formatted text and structured data from complex images and scanned medical/technical documents.',
+      image: '/assets/images/event_1.png',
+      tags: ['OCR Models', 'Computer Vision', 'Deep Learning', 'Python'],
+      liveUrl: '#',
+      githubUrl: 'https://github.com/kibretmulugeta',
+    },
+    {
+      title: 'Apartment Rental & Task Management Systems',
+      description: 'Designed complete rental platform featuring property management, search workflows, calendar integration, reminder systems, and JWT authentication.',
+      image: '/assets/images/event_4.png',
+      tags: ['Next.js', 'Node.js', 'FastAPI', 'PostgreSQL', 'React'],
+      liveUrl: '#',
+      githubUrl: 'https://github.com/kibretmulugeta',
     },
   ],
   events: [
@@ -61,8 +99,8 @@ export const defaultProfileData = {
   ],
   experience: [
     {
-      jobTitle: 'Freelance Machine Learning Engineer',
-      company: 'Independent Medical AI Consultant',
+      jobTitle: 'Freelance Machine Learning & Systems Engineer',
+      company: 'Independent AI Consultant',
       date: '2021 - Present',
       bullets: [
         'Engineered robust end-to-end medical image segmentation pipelines leveraging PyTorch and MONAI for brain MRI scan diagnostics.',
@@ -73,15 +111,15 @@ export const defaultProfileData = {
   ],
   education: [
     {
-      degree: 'MSc in Computer Engineering (AI & Data Engineering)',
+      degree: 'Master of Science in Computer Engineering (AI & Data Engineering)',
       institution: 'Bahir Dar University',
-      date: '2025',
-      thesis: 'Master\'s Thesis: Reward-driven neural plasticity-inspired optimization algorithms for U-Net brain MRI segmentation architectures.',
+      date: 'June 2025',
+      thesis: 'Research: Reward-Driven Neural Plasticity Inspired Optimization for Enhancing U-Net Based Medical Image Segmentation.',
     },
     {
-      degree: 'BSc in Electrical and Computer Engineering',
+      degree: 'Bachelor of Science in Electrical and Computer Engineering',
       institution: 'Debre Berhan University',
-      date: '2021',
+      date: 'June 2021',
       thesis: 'Focused on embedded computing, signal processing, and foundational machine learning principles.',
     },
   ],
@@ -99,7 +137,6 @@ export async function GET() {
     return NextResponse.json({ success: true, data: config });
   } catch (error) {
     console.error('API Error /api/profile:', error);
-    // Fallback to default memory profile data if DB is connecting
     return NextResponse.json({ success: true, data: defaultProfileData, fallback: true });
   }
 }

@@ -22,7 +22,7 @@ export default function AdminDashboardPage() {
   const [blogMessage, setBlogMessage] = useState(null);
 
   // New Project Form State
-  const [newProject, setNewProject] = useState({ title: '', description: '', image: '', tags: '', liveUrl: '#', githubUrl: 'https://github.com' });
+  const [newProject, setNewProject] = useState({ title: '', description: '', image: '', tags: '', liveUrl: '#', githubUrl: 'https://github.com/kibretmulugeta' });
   const [showAddProject, setShowAddProject] = useState(false);
 
   // Inquiries State
@@ -88,7 +88,7 @@ export default function AdminDashboardPage() {
   };
 
   const saveProfileCMS = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     setSavingProfile(true);
     setProfileMessage(null);
     try {
@@ -118,9 +118,9 @@ export default function AdminDashboardPage() {
       projects: [...(prev.projects || []), createdProject],
     }));
 
-    setNewProject({ title: '', description: '', image: '', tags: '', liveUrl: '#', githubUrl: 'https://github.com' });
+    setNewProject({ title: '', description: '', image: '', tags: '', liveUrl: '#', githubUrl: 'https://github.com/kibretmulugeta' });
     setShowAddProject(false);
-    alert('Project added to list! Click "Save Profile & Projects Live" on the Profile tab to persist to MongoDB.');
+    alert('Project added to list! Click "Save All Projects to MongoDB Live" to publish changes.');
   };
 
   const handleProjectEdit = (index, field, value) => {
@@ -175,7 +175,6 @@ export default function AdminDashboardPage() {
     }
   };
 
-  // Inquiries Handler
   const updateInquiryStatus = async (id, newStatus) => {
     try {
       const res = await fetch('/api/admin/inquiries', {
@@ -252,6 +251,8 @@ export default function AdminDashboardPage() {
   }
 
   const totalBlogViews = blogs.reduce((acc, b) => acc + (b.views || 0), 0);
+  const totalResumeDownloads = profileData?.resumeDownloads || 0;
+  const downloadLogs = profileData?.resumeDownloadLogs || [];
 
   return (
     <>
@@ -281,7 +282,7 @@ export default function AdminDashboardPage() {
                   }}
                 >
                   <i className="fa-solid fa-id-card"></i>
-                  <span>Profile & Resume</span>
+                  <span>Profile & Resume ({totalResumeDownloads} Downloads)</span>
                 </button>
 
                 <button
@@ -325,99 +326,146 @@ export default function AdminDashboardPage() {
               </div>
             </div>
 
-            {/* TAB 1: PROFILE & RESUME MANAGEMENT */}
+            {/* TAB 1: PROFILE & RESUME MANAGEMENT + DOWNLOAD NOTIFICATION LOGS */}
             {activeTab === 'profile' && (
-              <div className="card" style={{ padding: '2.5rem' }}>
-                <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>Edit Profile & Resume Settings</h2>
-
-                {profileMessage && (
-                  <div style={{ padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', background: profileMessage.type === 'success' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)', color: profileMessage.type === 'success' ? '#4ade80' : '#f87171' }}>
-                    {profileMessage.text}
+              <div>
+                {/* Resume Downloads Notification Summary Cards */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+                  <div className="card" style={{ padding: '1.5rem', background: 'var(--card-bg)' }}>
+                    <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Total Resume Downloads</span>
+                    <h2 style={{ fontSize: '2.2rem', marginTop: '0.25rem', color: '#4ade80' }}>
+                      <i className="fa-solid fa-file-arrow-down" style={{ marginRight: '0.5rem' }}></i>
+                      {totalResumeDownloads}
+                    </h2>
                   </div>
-                )}
 
-                {loadingProfile || !profileData ? (
-                  <p>Loading profile settings...</p>
-                ) : (
-                  <form onSubmit={saveProfileCMS}>
-                    <div className="form-grid">
-                      <div className="form-group">
-                        <label htmlFor="photoUrl">Profile Headshot Image URL/Path</label>
-                        <input
-                          type="text"
-                          id="photoUrl"
-                          className="form-input"
-                          value={profileData.hero?.photoUrl || ''}
-                          onChange={(e) => handleHeroChange('photoUrl', e.target.value)}
-                          required
-                        />
-                      </div>
+                  <div className="card" style={{ padding: '1.5rem', background: 'var(--card-bg)' }}>
+                    <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Latest Download Notification</span>
+                    <h4 style={{ fontSize: '1.1rem', marginTop: '0.5rem', color: 'var(--accent-light)' }}>
+                      {downloadLogs.length > 0 ? new Date(downloadLogs[downloadLogs.length - 1].downloadedAt).toLocaleString() : 'No downloads recorded yet'}
+                    </h4>
+                  </div>
+                </div>
 
-                      <div className="form-group">
-                        <label htmlFor="resumeUrl">Resume / CV Document URL or Path</label>
-                        <input
-                          type="text"
-                          id="resumeUrl"
-                          className="form-input"
-                          value={profileData.hero?.resumeUrl || ''}
-                          onChange={(e) => handleHeroChange('resumeUrl', e.target.value)}
-                          placeholder="e.g. /assets/Kibret_Mulugeta_Resume.pdf"
-                          required
-                        />
-                        <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                          Linked to "Download Resume / CV" button on main page.
-                        </span>
-                      </div>
+                {/* Live Download Activity Log Feed */}
+                <div className="card" style={{ padding: '2rem', marginBottom: '2rem' }}>
+                  <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <i className="fa-solid fa-bell" style={{ color: '#facc15' }}></i>
+                    <span>Client Resume Download Notifications</span>
+                  </h3>
+
+                  {downloadLogs.length === 0 ? (
+                    <p style={{ color: 'var(--text-muted)' }}>No client download logs recorded yet.</p>
+                  ) : (
+                    <div style={{ maxHeight: '220px', overflowY: 'auto' }}>
+                      {downloadLogs.slice().reverse().map((log, idx) => (
+                        <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 1rem', background: 'var(--bg-secondary)', borderRadius: '8px', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
+                          <div>
+                            <span style={{ color: '#4ade80', fontWeight: 600 }}>Client downloaded CV / Resume</span>
+                            <br />
+                            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{log.ip} • {log.userAgent?.split(' ')[0] || 'Browser'}</span>
+                          </div>
+                          <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
+                            {new Date(log.downloadedAt).toLocaleString()}
+                          </span>
+                        </div>
+                      ))}
                     </div>
+                  )}
+                </div>
 
-                    <div className="form-grid" style={{ marginTop: '1rem' }}>
-                      <div className="form-group">
-                        <label htmlFor="heroName">Full Name</label>
-                        <input
-                          type="text"
-                          id="heroName"
-                          className="form-input"
-                          value={profileData.hero?.name || ''}
-                          onChange={(e) => handleHeroChange('name', e.target.value)}
-                          required
-                        />
+                {/* Edit Profile & Resume Form */}
+                <div className="card" style={{ padding: '2.5rem' }}>
+                  <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>Edit Profile & Resume Settings</h2>
+
+                  {profileMessage && (
+                    <div style={{ padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', background: profileMessage.type === 'success' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)', color: profileMessage.type === 'success' ? '#4ade80' : '#f87171' }}>
+                      {profileMessage.text}
+                    </div>
+                  )}
+
+                  {loadingProfile || !profileData ? (
+                    <p>Loading profile settings...</p>
+                  ) : (
+                    <form onSubmit={saveProfileCMS}>
+                      <div className="form-grid">
+                        <div className="form-group">
+                          <label htmlFor="photoUrl">Profile Headshot Image URL/Path</label>
+                          <input
+                            type="text"
+                            id="photoUrl"
+                            className="form-input"
+                            value={profileData.hero?.photoUrl || ''}
+                            onChange={(e) => handleHeroChange('photoUrl', e.target.value)}
+                            required
+                          />
+                        </div>
+
+                        <div className="form-group">
+                          <label htmlFor="resumeUrl">Resume PDF / Download Route</label>
+                          <input
+                            type="text"
+                            id="resumeUrl"
+                            className="form-input"
+                            value={profileData.hero?.resumeUrl || '/api/resume/download'}
+                            onChange={(e) => handleHeroChange('resumeUrl', e.target.value)}
+                            required
+                          />
+                          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                            Set to <code>/api/resume/download</code> to track every client download automatically.
+                          </span>
+                        </div>
                       </div>
 
-                      <div className="form-group">
-                        <label htmlFor="heroTitle">Professional Subtitle</label>
-                        <input
-                          type="text"
-                          id="heroTitle"
-                          className="form-input"
-                          value={profileData.hero?.title || ''}
-                          onChange={(e) => handleHeroChange('title', e.target.value)}
-                          required
-                        />
+                      <div className="form-grid" style={{ marginTop: '1rem' }}>
+                        <div className="form-group">
+                          <label htmlFor="heroName">Full Name</label>
+                          <input
+                            type="text"
+                            id="heroName"
+                            className="form-input"
+                            value={profileData.hero?.name || ''}
+                            onChange={(e) => handleHeroChange('name', e.target.value)}
+                            required
+                          />
+                        </div>
+
+                        <div className="form-group">
+                          <label htmlFor="heroTitle">Professional Subtitle</label>
+                          <input
+                            type="text"
+                            id="heroTitle"
+                            className="form-input"
+                            value={profileData.hero?.title || ''}
+                            onChange={(e) => handleHeroChange('title', e.target.value)}
+                            required
+                          />
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="form-group" style={{ marginTop: '1rem' }}>
-                      <label htmlFor="heroBio">Hero Biography & Research Focus</label>
-                      <textarea
-                        id="heroBio"
-                        className="form-textarea"
-                        rows={4}
-                        value={profileData.hero?.bio || ''}
-                        onChange={(e) => handleHeroChange('bio', e.target.value)}
-                        required
-                      ></textarea>
-                    </div>
+                      <div className="form-group" style={{ marginTop: '1rem' }}>
+                        <label htmlFor="heroBio">Hero Biography & Research Summary</label>
+                        <textarea
+                          id="heroBio"
+                          className="form-textarea"
+                          rows={4}
+                          value={profileData.hero?.bio || ''}
+                          onChange={(e) => handleHeroChange('bio', e.target.value)}
+                          required
+                        ></textarea>
+                      </div>
 
-                    <button type="submit" className="submit-btn" disabled={savingProfile} style={{ marginTop: '1.5rem', width: '100%' }}>
-                      <i className="fa-solid fa-floppy-disk"></i>
-                      <span>{savingProfile ? 'Saving Settings...' : 'Save Profile & Resume Live'}</span>
-                    </button>
-                  </form>
-                )}
+                      <button type="submit" className="submit-btn" disabled={savingProfile} style={{ marginTop: '1.5rem', width: '100%' }}>
+                        <i className="fa-solid fa-floppy-disk"></i>
+                        <span>{savingProfile ? 'Saving Settings...' : 'Save Profile & Resume Settings'}</span>
+                      </button>
+                    </form>
+                  )}
+                </div>
               </div>
             )}
 
-            {/* TAB 2: FULL PROJECT MANAGER (ADD, EDIT, DELETE) */}
+            {/* TAB 2: FULL PROJECT MANAGER */}
             {activeTab === 'projects' && (
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
@@ -428,7 +476,6 @@ export default function AdminDashboardPage() {
                   </button>
                 </div>
 
-                {/* Add New Project Form Modal/Card */}
                 {showAddProject && (
                   <div className="card" style={{ padding: '2rem', marginBottom: '2rem', border: '1px solid var(--accent-color)' }}>
                     <h4 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--accent-light)' }}>Add New Project</h4>
@@ -475,7 +522,7 @@ export default function AdminDashboardPage() {
                           className="form-input"
                           value={newProject.tags}
                           onChange={(e) => setNewProject({ ...newProject, tags: e.target.value })}
-                          placeholder="PyTorch, MONAI, U-Net, FastAPI"
+                          placeholder="U-Net, MONAI, PyTorch, FastAPI"
                         />
                       </div>
 
@@ -487,7 +534,6 @@ export default function AdminDashboardPage() {
                   </div>
                 )}
 
-                {/* Edit & Delete Existing Projects List */}
                 {profileData?.projects?.map((proj, idx) => (
                   <div className="card" key={idx} style={{ padding: '1.75rem', marginBottom: '1.5rem' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
@@ -541,7 +587,6 @@ export default function AdminDashboardPage() {
             {/* TAB 3: BLOG ENGINE & VIEW ANALYTICS */}
             {activeTab === 'blogs' && (
               <div>
-                {/* Blog Analytics Overview Cards */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
                   <div className="card" style={{ padding: '1.5rem' }}>
                     <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Published Blog Articles</span>
@@ -556,7 +601,6 @@ export default function AdminDashboardPage() {
                   </div>
                 </div>
 
-                {/* Write New Blog Post Card */}
                 <div className="card" style={{ padding: '2.5rem', marginBottom: '2.5rem' }}>
                   <h3 style={{ fontSize: '1.4rem', marginBottom: '1.5rem' }}>Publish New Technical Article</h3>
 
@@ -606,12 +650,12 @@ export default function AdminDashboardPage() {
                     </div>
 
                     <div className="form-group" style={{ marginTop: '1rem' }}>
-                      <label htmlFor="blogContent">Article Content (Markdown / Paragraphs)</label>
+                      <label htmlFor="blogContent">Article Content</label>
                       <textarea
                         id="blogContent"
                         className="form-textarea"
                         rows={8}
-                        placeholder="Write your research article content here. Separate sections with ### headers..."
+                        placeholder="Write your research article content here..."
                         value={newBlog.content}
                         onChange={(e) => setNewBlog({ ...newBlog, content: e.target.value })}
                         required
@@ -625,7 +669,6 @@ export default function AdminDashboardPage() {
                   </form>
                 </div>
 
-                {/* Blog Analytics & Post List Table */}
                 <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Blog Analytics & Reader Views</h3>
                 <div className="card admin-table-wrapper">
                   {loadingBlogs ? (

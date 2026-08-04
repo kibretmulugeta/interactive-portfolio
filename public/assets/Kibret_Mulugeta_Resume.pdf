@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Kibret Mulugeta - Resume</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #1a1a1a; max-width: 850px; margin: 2rem auto; padding: 0 1.5rem; }
+    h1 { font-size: 2.2rem; margin-bottom: 0.2rem; color: #0f172a; text-align: center; }
+    .subtitle { text-align: center; font-weight: 700; color: #2563eb; font-size: 0.95rem; letter-spacing: 0.05em; margin-bottom: 1rem; }
+    .contact { text-align: center; font-size: 0.9rem; color: #475569; margin-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 1rem; }
+    h2 { font-size: 1.25rem; color: #1e293b; border-bottom: 1px solid #cbd5e1; padding-bottom: 0.3rem; margin-top: 1.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    p { margin-bottom: 0.75rem; font-size: 0.95rem; }
+    ul { padding-left: 1.25rem; margin-bottom: 1rem; }
+    li { margin-bottom: 0.35rem; font-size: 0.925rem; }
+    .skills-grid { display: grid; grid-template-columns: 180px 1fr; gap: 0.5rem; margin-bottom: 0.5rem; font-size: 0.925rem; }
+    .skills-title { font-weight: 600; color: #334155; }
+    .project-item { margin-bottom: 1rem; }
+    .project-name { font-weight: 700; font-size: 1rem; color: #0f172a; }
+    .tech-stack { font-style: italic; color: #64748b; font-size: 0.85rem; }
+    @media print { body { max-width: 100%; margin: 0; padding: 1cm; } }
+  </style>
+</head>
+<body>
+  <h1>Kibret Mulugeta</h1>
+  <div class="subtitle">AI ENGINEER | MACHINE LEARNING ENGINEER | FULL-STACK DEVELOPER | SYSTEMS ENGINEER</div>
+  <div class="contact">
+    📍 Addis Ababa, Ethiopia &nbsp;|&nbsp; ✉️ Kibretmail@gmail.com &nbsp;|&nbsp; 🌐 github.com/kibretmulugeta &nbsp;|&nbsp; 🔗 linkedin.com/in/kibret-mulugeta
+  </div>
+
+  <h2>Professional Summary</h2>
+  <p>
+    AI Engineer, Machine Learning Engineer, Full-Stack Developer, and Systems Engineer with an MSc in Computer Engineering specializing in Artificial Intelligence and Data Engineering. Experienced in designing intelligent systems, developing machine learning and deep learning models, building full-stack web applications, designing backend APIs, and deploying scalable software solutions.
+  </p>
+
+  <h2>Technical Skills</h2>
+  <div class="skills-grid"><div class="skills-title">Programming Languages:</div><div>Python, JavaScript, PHP, SQL, C/C++</div></div>
+  <div class="skills-grid"><div class="skills-title">AI & Machine Learning:</div><div>Algorithms, Deep Learning, Neural Networks, CNNs, NLP, Computer Vision, Model Optimization, Feature Engineering</div></div>
+  <div class="skills-grid"><div class="skills-title">Deep Learning Frameworks:</div><div>TensorFlow / Keras, PyTorch, MONAI, Scikit-Learn, OpenCV, NumPy, Pandas</div></div>
+  <div class="skills-grid"><div class="skills-title">NLP Technologies:</div><div>Sentiment Analysis, OCR Systems, Speech-to-Text, Text-to-Speech, Amharic ↔ English Machine Translation, LLMs</div></div>
+  <div class="skills-grid"><div class="skills-title">Computer Vision:</div><div>Image Segmentation, Face Recognition, CCTV Video Analysis, Object Detection, Car Plate Detection, Medical Imaging</div></div>
+  <div class="skills-grid"><div class="skills-title">Full-Stack Development:</div><div>React.js, Next.js, HTML5, CSS3, Tailwind CSS | FastAPI, Flask, Node.js, Express.js, Laravel</div></div>
+  <div class="skills-grid"><div class="skills-title">Databases & Cloud:</div><div>PostgreSQL, MongoDB, MySQL, SQLite | Git/GitHub, Docker, Vercel, Render</div></div>
+
+  <h2>Featured AI & Machine Learning Projects</h2>
+  <div class="project-item">
+    <div class="project-name">Medical Image Analysis System</div>
+    <div class="tech-stack">Technologies: U-Net, MONAI, PyTorch, TensorFlow</div>
+    <p>Developed deep learning models for medical image understanding and automated diagnosis support focused on Brain MRI analysis.</p>
+  </div>
+  <div class="project-item">
+    <div class="project-name">Novel Optimization Algorithm Design & Implementation</div>
+    <div class="tech-stack">Technologies: Neural Plasticity, Deep Learning Optimization</div>
+    <p>Designed novel optimization algorithms inspired by biological intelligence and neural adaptation mechanisms.</p>
+  </div>
+  <div class="project-item">
+    <div class="project-name">Speech Intelligence & Translation Systems</div>
+    <div class="tech-stack">Technologies: Deep Learning, NLP, Speech Processing, Machine Translation</div>
+    <p>Developed Speech-to-Text, Text-to-Speech, and Amharic ↔ English translation systems.</p>
+  </div>
+
+  <h2>Education</h2>
+  <p><strong>Master of Science in Computer Engineering (AI & Data Engineering)</strong> — Bahir Dar University (June 2025)<br>
+  <em>Research: Reward-Driven Neural Plasticity Inspired Optimization for Enhancing U-Net Based Medical Image Segmentation</em></p>
+  <p><strong>Bachelor of Science in Electrical and Computer Engineering</strong> — Debre Berhan University (June 2021)</p>
+</body>
+</html>
