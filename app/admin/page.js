@@ -6,25 +6,63 @@ import Navbar from '@/components/Navbar';
 
 export default function AdminDashboardPage() {
   const { user, isLoading } = useUser();
-  const [activeTab, setActiveTab] = useState('cms'); // 'cms' or 'inquiries'
+  const [activeTab, setActiveTab] = useState('profile'); // 'profile', 'projects', 'blogs', 'inquiries'
   
+  // Profile & Resume State
+  const [profileData, setProfileData] = useState(null);
+  const [loadingProfile, setLoadingProfile] = useState(true);
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [profileMessage, setProfileMessage] = useState(null);
+
+  // Blogs & Analytics State
+  const [blogs, setBlogs] = useState([]);
+  const [loadingBlogs, setLoadingBlogs] = useState(true);
+  const [newBlog, setNewBlog] = useState({ title: '', excerpt: '', content: '', readTime: '5 min read' });
+  const [publishingBlog, setPublishingBlog] = useState(false);
+  const [blogMessage, setBlogMessage] = useState(null);
+
+  // New Project Form State
+  const [newProject, setNewProject] = useState({ title: '', description: '', image: '', tags: '', liveUrl: '#', githubUrl: 'https://github.com' });
+  const [showAddProject, setShowAddProject] = useState(false);
+
   // Inquiries State
   const [inquiries, setInquiries] = useState([]);
   const [loadingInquiries, setLoadingInquiries] = useState(true);
   const [inquiriesError, setInquiriesError] = useState(null);
 
-  // Profile CMS State
-  const [profileData, setProfileData] = useState(null);
-  const [loadingProfile, setLoadingProfile] = useState(true);
-  const [savingProfile, setSavingProfile] = useState(false);
-  const [saveMessage, setSaveMessage] = useState(null);
-
   useEffect(() => {
     if (user) {
-      fetchInquiries();
       fetchProfileCMS();
+      fetchBlogs();
+      fetchInquiries();
     }
   }, [user]);
+
+  const fetchProfileCMS = async () => {
+    setLoadingProfile(true);
+    try {
+      const res = await fetch('/api/profile');
+      const data = await res.json();
+      if (data.data) setProfileData(data.data);
+    } catch (err) {
+      console.error('Error loading profile:', err);
+    } finally {
+      setLoadingProfile(false);
+    }
+  };
+
+  const fetchBlogs = async () => {
+    setLoadingBlogs(true);
+    try {
+      const res = await fetch('/api/blogs');
+      const data = await res.json();
+      if (data.data) setBlogs(data.data);
+    } catch (err) {
+      console.error('Error loading blogs:', err);
+    } finally {
+      setLoadingBlogs(false);
+    }
+  };
 
   const fetchInquiries = async () => {
     setLoadingInquiries(true);
@@ -41,50 +79,51 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const fetchProfileCMS = async () => {
-    setLoadingProfile(true);
-    try {
-      const res = await fetch('/api/profile');
-      const data = await res.json();
-      if (data.data) {
-        setProfileData(data.data);
-      }
-    } catch (err) {
-      console.error('Error loading profile CMS:', err);
-    } finally {
-      setLoadingProfile(false);
-    }
-  };
-
-  const updateStatus = async (id, newStatus) => {
-    try {
-      const res = await fetch('/api/admin/inquiries', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, status: newStatus }),
-      });
-      if (!res.ok) {
-        const err = await res.json();
-        alert(`Failed to update status: ${err.error}`);
-        return;
-      }
-      setInquiries(prev => prev.map(item => (item._id === id ? { ...item, status: newStatus } : item)));
-    } catch (err) {
-      alert(`Error updating status: ${err.message}`);
-    }
-  };
-
+  // Profile & Resume Handlers
   const handleHeroChange = (field, value) => {
     setProfileData(prev => ({
       ...prev,
-      hero: {
-        ...prev.hero,
-        [field]: value,
-      },
+      hero: { ...prev.hero, [field]: value },
     }));
   };
 
-  const handleProjectChange = (index, field, value) => {
+  const saveProfileCMS = async (e) => {
+    e.preventDefault();
+    setSavingProfile(true);
+    setProfileMessage(null);
+    try {
+      const res = await fetch('/api/admin/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(profileData),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || 'Failed to save changes.');
+      setProfileMessage({ type: 'success', text: 'Profile & Resume settings saved live!' });
+    } catch (err) {
+      setProfileMessage({ type: 'error', text: err.message });
+    } finally {
+      setSavingProfile(false);
+    }
+  };
+
+  // Project CRUD Handlers
+  const handleAddProject = (e) => {
+    e.preventDefault();
+    const tagArray = typeof newProject.tags === 'string' ? newProject.tags.split(',').map(t => t.trim()).filter(Boolean) : [];
+    const createdProject = { ...newProject, tags: tagArray.length > 0 ? tagArray : ['AI', 'PyTorch'] };
+
+    setProfileData(prev => ({
+      ...prev,
+      projects: [...(prev.projects || []), createdProject],
+    }));
+
+    setNewProject({ title: '', description: '', image: '', tags: '', liveUrl: '#', githubUrl: 'https://github.com' });
+    setShowAddProject(false);
+    alert('Project added to list! Click "Save Profile & Projects Live" on the Profile tab to persist to MongoDB.');
+  };
+
+  const handleProjectEdit = (index, field, value) => {
     setProfileData(prev => {
       const updated = [...(prev.projects || [])];
       updated[index] = { ...updated[index], [field]: value };
@@ -92,29 +131,62 @@ export default function AdminDashboardPage() {
     });
   };
 
-  const saveProfileCMS = async (e) => {
+  const handleDeleteProject = (index) => {
+    if (confirm('Are you sure you want to delete this project?')) {
+      setProfileData(prev => ({
+        ...prev,
+        projects: prev.projects.filter((_, idx) => idx !== index),
+      }));
+    }
+  };
+
+  // Blog CRUD & Analytics Handlers
+  const handlePublishBlog = async (e) => {
     e.preventDefault();
-    setSavingProfile(true);
-    setSaveMessage(null);
-
+    setPublishingBlog(true);
+    setBlogMessage(null);
     try {
-      const res = await fetch('/api/admin/profile', {
-        method: 'PUT',
+      const res = await fetch('/api/admin/blogs', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(profileData),
+        body: JSON.stringify(newBlog),
       });
-
       const result = await res.json();
+      if (!res.ok) throw new Error(result.error || 'Failed to publish blog post.');
 
-      if (!res.ok) {
-        throw new Error(result.error || 'Failed to save portfolio content.');
-      }
-
-      setSaveMessage({ type: 'success', text: 'Portfolio content saved successfully! All updates are live.' });
+      setBlogMessage({ type: 'success', text: 'Blog post published successfully!' });
+      setNewBlog({ title: '', excerpt: '', content: '', readTime: '5 min read' });
+      fetchBlogs();
     } catch (err) {
-      setSaveMessage({ type: 'error', text: err.message });
+      setBlogMessage({ type: 'error', text: err.message });
     } finally {
-      setSavingProfile(false);
+      setPublishingBlog(false);
+    }
+  };
+
+  const handleDeleteBlog = async (id) => {
+    if (!confirm('Are you sure you want to delete this blog post?')) return;
+    try {
+      const res = await fetch(`/api/admin/blogs?id=${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed to delete blog post');
+      fetchBlogs();
+    } catch (err) {
+      alert(`Error: ${err.message}`);
+    }
+  };
+
+  // Inquiries Handler
+  const updateInquiryStatus = async (id, newStatus) => {
+    try {
+      const res = await fetch('/api/admin/inquiries', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status: newStatus }),
+      });
+      if (!res.ok) throw new Error('Failed to update status');
+      setInquiries(prev => prev.map(item => (item._id === id ? { ...item, status: newStatus } : item)));
+    } catch (err) {
+      alert(`Error updating inquiry: ${err.message}`);
     }
   };
 
@@ -124,7 +196,7 @@ export default function AdminDashboardPage() {
         <Navbar />
         <main className="main-content">
           <div className="container section text-center">
-            <p>Verifying Auth0 session credentials...</p>
+            <p>Verifying Auth0 Admin session...</p>
           </div>
         </main>
       </>
@@ -142,7 +214,7 @@ export default function AdminDashboardPage() {
                 <i className="fa-solid fa-lock" style={{ fontSize: '3rem', color: 'var(--accent-color)', marginBottom: '1rem' }}></i>
                 <h2>Authentication Required</h2>
                 <p style={{ color: 'var(--text-secondary)', margin: '1rem 0 2rem 0' }}>
-                  You must be logged in with an Administrator account to view and edit the contracting dashboard.
+                  Please sign in with an Administrator account to access the dashboard.
                 </p>
                 <a href="/api/auth/login" className="pill-btn outlined-btn" style={{ background: 'var(--accent-color)', color: '#fff' }}>
                   Sign In via Auth0 / Google
@@ -166,10 +238,10 @@ export default function AdminDashboardPage() {
                 <i className="fa-solid fa-shield-halved" style={{ fontSize: '3rem', color: '#f87171', marginBottom: '1rem' }}></i>
                 <h2 style={{ color: '#f87171' }}>403 Access Denied</h2>
                 <p style={{ color: 'var(--text-secondary)', margin: '1rem 0 2rem 0' }}>
-                  Logged in as <strong>{user.email}</strong>, but this account lacks the <code>Admin</code> role claim required to view or edit portfolio content.
+                  Account <strong>{user.email}</strong> is not configured with Admin privileges.
                 </p>
                 <a href="/api/auth/logout" className="pill-btn outlined-btn">
-                  Sign Out / Switch Account
+                  Sign Out
                 </a>
               </div>
             </div>
@@ -179,90 +251,126 @@ export default function AdminDashboardPage() {
     );
   }
 
+  const totalBlogViews = blogs.reduce((acc, b) => acc + (b.views || 0), 0);
+
   return (
     <>
       <Navbar />
       <main className="main-content">
         <section className="section admin-hero">
           <div className="container">
+            
+            {/* Header Title & Nav Tabs */}
             <div className="section-header align-left" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
               <div>
                 <h1 className="section-title">Admin Dashboard</h1>
                 <p className="section-subtitle">
-                  Manage portfolio content CMS & client contract proposals.
+                  Logged in as <strong>{user.email}</strong>
                 </p>
               </div>
 
               {/* Navigation Tabs */}
-              <div style={{ display: 'flex', gap: '0.75rem' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                 <button
-                  onClick={() => setActiveTab('cms')}
-                  className={`pill-btn ${activeTab === 'cms' ? 'outlined-btn' : ''}`}
+                  onClick={() => setActiveTab('profile')}
+                  className="pill-btn"
                   style={{
-                    background: activeTab === 'cms' ? 'var(--accent-color)' : 'var(--bg-secondary)',
+                    background: activeTab === 'profile' ? 'var(--accent-color)' : 'var(--bg-secondary)',
                     color: '#fff',
+                    border: '1px solid var(--card-border)',
                   }}
                 >
-                  <i className="fa-solid fa-pen-to-square"></i>
-                  <span>Edit Portfolio CMS</span>
+                  <i className="fa-solid fa-id-card"></i>
+                  <span>Profile & Resume</span>
                 </button>
+
+                <button
+                  onClick={() => setActiveTab('projects')}
+                  className="pill-btn"
+                  style={{
+                    background: activeTab === 'projects' ? 'var(--accent-color)' : 'var(--bg-secondary)',
+                    color: '#fff',
+                    border: '1px solid var(--card-border)',
+                  }}
+                >
+                  <i className="fa-solid fa-diagram-project"></i>
+                  <span>Manage Projects ({profileData?.projects?.length || 0})</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('blogs')}
+                  className="pill-btn"
+                  style={{
+                    background: activeTab === 'blogs' ? 'var(--accent-color)' : 'var(--bg-secondary)',
+                    color: '#fff',
+                    border: '1px solid var(--card-border)',
+                  }}
+                >
+                  <i className="fa-solid fa-pen-nib"></i>
+                  <span>Blogs & Analytics</span>
+                </button>
+
                 <button
                   onClick={() => setActiveTab('inquiries')}
-                  className={`pill-btn ${activeTab === 'inquiries' ? 'outlined-btn' : ''}`}
+                  className="pill-btn"
                   style={{
                     background: activeTab === 'inquiries' ? 'var(--accent-color)' : 'var(--bg-secondary)',
                     color: '#fff',
+                    border: '1px solid var(--card-border)',
                   }}
                 >
                   <i className="fa-solid fa-inbox"></i>
-                  <span>Client Inquiries ({inquiries.length})</span>
+                  <span>Proposals ({inquiries.length})</span>
                 </button>
               </div>
             </div>
 
-            {/* TAB 1: PORTFOLIO CONTENT CMS EDITOR */}
-            {activeTab === 'cms' && (
+            {/* TAB 1: PROFILE & RESUME MANAGEMENT */}
+            {activeTab === 'profile' && (
               <div className="card" style={{ padding: '2.5rem' }}>
-                <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>Edit Live Portfolio Content</h2>
+                <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>Edit Profile & Resume Settings</h2>
 
-                {saveMessage && (
-                  <div
-                    style={{
-                      padding: '1rem',
-                      borderRadius: '8px',
-                      marginBottom: '1.5rem',
-                      background: saveMessage.type === 'success' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                      border: saveMessage.type === 'success' ? '1px solid rgba(34, 197, 94, 0.3)' : '1px solid rgba(239, 68, 68, 0.3)',
-                      color: saveMessage.type === 'success' ? '#4ade80' : '#f87171',
-                    }}
-                  >
-                    {saveMessage.text}
+                {profileMessage && (
+                  <div style={{ padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', background: profileMessage.type === 'success' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)', color: profileMessage.type === 'success' ? '#4ade80' : '#f87171' }}>
+                    {profileMessage.text}
                   </div>
                 )}
 
                 {loadingProfile || !profileData ? (
-                  <p>Loading profile configuration...</p>
+                  <p>Loading profile settings...</p>
                 ) : (
                   <form onSubmit={saveProfileCMS}>
-                    <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--accent-light)' }}>1. Profile Photo & Hero Bio</h3>
-
                     <div className="form-grid">
                       <div className="form-group">
-                        <label htmlFor="photoUrl">Profile Photo Image URL / Path</label>
+                        <label htmlFor="photoUrl">Profile Headshot Image URL/Path</label>
                         <input
                           type="text"
                           id="photoUrl"
                           className="form-input"
                           value={profileData.hero?.photoUrl || ''}
                           onChange={(e) => handleHeroChange('photoUrl', e.target.value)}
-                          placeholder="e.g. /assets/images/kibret_photo.jpg"
+                          required
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label htmlFor="resumeUrl">Resume / CV Document URL or Path</label>
+                        <input
+                          type="text"
+                          id="resumeUrl"
+                          className="form-input"
+                          value={profileData.hero?.resumeUrl || ''}
+                          onChange={(e) => handleHeroChange('resumeUrl', e.target.value)}
+                          placeholder="e.g. /assets/Kibret_Mulugeta_Resume.pdf"
                           required
                         />
                         <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                          Current Photo: {profileData.hero?.photoUrl}
+                          Linked to "Download Resume / CV" button on main page.
                         </span>
                       </div>
+                    </div>
 
+                    <div className="form-grid" style={{ marginTop: '1rem' }}>
                       <div className="form-group">
                         <label htmlFor="heroName">Full Name</label>
                         <input
@@ -274,11 +382,9 @@ export default function AdminDashboardPage() {
                           required
                         />
                       </div>
-                    </div>
 
-                    <div className="form-grid" style={{ marginTop: '1rem' }}>
                       <div className="form-group">
-                        <label htmlFor="heroTitle">Professional Title</label>
+                        <label htmlFor="heroTitle">Professional Subtitle</label>
                         <input
                           type="text"
                           id="heroTitle"
@@ -288,22 +394,10 @@ export default function AdminDashboardPage() {
                           required
                         />
                       </div>
-
-                      <div className="form-group">
-                        <label htmlFor="badgeText">Availability Badge Text</label>
-                        <input
-                          type="text"
-                          id="badgeText"
-                          className="form-input"
-                          value={profileData.hero?.badgeText || ''}
-                          onChange={(e) => handleHeroChange('badgeText', e.target.value)}
-                          required
-                        />
-                      </div>
                     </div>
 
                     <div className="form-group" style={{ marginTop: '1rem' }}>
-                      <label htmlFor="heroBio">Hero Bio / Research Focus</label>
+                      <label htmlFor="heroBio">Hero Biography & Research Focus</label>
                       <textarea
                         id="heroBio"
                         className="form-textarea"
@@ -314,63 +408,278 @@ export default function AdminDashboardPage() {
                       ></textarea>
                     </div>
 
-                    <h3 style={{ fontSize: '1.2rem', margin: '2rem 0 1rem 0', color: 'var(--accent-light)' }}>2. Featured Projects</h3>
-                    
-                    {profileData.projects?.map((proj, idx) => (
-                      <div key={idx} style={{ background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '12px', marginBottom: '1.5rem', border: '1px solid var(--card-border)' }}>
-                        <h4 style={{ marginBottom: '1rem' }}>Project #{idx + 1}</h4>
-                        <div className="form-grid">
-                          <div className="form-group">
-                            <label>Project Title</label>
-                            <input
-                              type="text"
-                              className="form-input"
-                              value={proj.title || ''}
-                              onChange={(e) => handleProjectChange(idx, 'title', e.target.value)}
-                            />
-                          </div>
-                          <div className="form-group">
-                            <label>Project Image Path / URL</label>
-                            <input
-                              type="text"
-                              className="form-input"
-                              value={proj.image || ''}
-                              onChange={(e) => handleProjectChange(idx, 'image', e.target.value)}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="form-group" style={{ marginTop: '1rem' }}>
-                          <label>Description</label>
-                          <textarea
-                            className="form-textarea"
-                            rows={3}
-                            value={proj.description || ''}
-                            onChange={(e) => handleProjectChange(idx, 'description', e.target.value)}
-                          ></textarea>
-                        </div>
-                      </div>
-                    ))}
-
-                    <button
-                      type="submit"
-                      className="submit-btn"
-                      disabled={savingProfile}
-                      style={{ marginTop: '1.5rem', background: 'var(--accent-color)', width: '100%' }}
-                    >
+                    <button type="submit" className="submit-btn" disabled={savingProfile} style={{ marginTop: '1.5rem', width: '100%' }}>
                       <i className="fa-solid fa-floppy-disk"></i>
-                      <span>{savingProfile ? 'Saving Changes to MongoDB...' : 'Save Portfolio Changes Live'}</span>
+                      <span>{savingProfile ? 'Saving Settings...' : 'Save Profile & Resume Live'}</span>
                     </button>
                   </form>
                 )}
               </div>
             )}
 
-            {/* TAB 2: CLIENT CONTRACTING INQUIRIES */}
+            {/* TAB 2: FULL PROJECT MANAGER (ADD, EDIT, DELETE) */}
+            {activeTab === 'projects' && (
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+                  <h3>Project Portfolio Manager</h3>
+                  <button onClick={() => setShowAddProject(!showAddProject)} className="pill-btn outlined-btn" style={{ background: 'var(--accent-color)', color: '#fff' }}>
+                    <i className="fa-solid fa-plus"></i>
+                    <span>{showAddProject ? 'Close Form' : 'Add New Project'}</span>
+                  </button>
+                </div>
+
+                {/* Add New Project Form Modal/Card */}
+                {showAddProject && (
+                  <div className="card" style={{ padding: '2rem', marginBottom: '2rem', border: '1px solid var(--accent-color)' }}>
+                    <h4 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--accent-light)' }}>Add New Project</h4>
+                    <form onSubmit={handleAddProject}>
+                      <div className="form-grid">
+                        <div className="form-group">
+                          <label>Project Title</label>
+                          <input
+                            type="text"
+                            className="form-input"
+                            value={newProject.title}
+                            onChange={(e) => setNewProject({ ...newProject, title: e.target.value })}
+                            required
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Project Image Path / URL</label>
+                          <input
+                            type="text"
+                            className="form-input"
+                            value={newProject.image}
+                            onChange={(e) => setNewProject({ ...newProject, image: e.target.value })}
+                            placeholder="/assets/images/scholarxiv.png"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div className="form-group" style={{ marginTop: '1rem' }}>
+                        <label>Description</label>
+                        <textarea
+                          className="form-textarea"
+                          rows={3}
+                          value={newProject.description}
+                          onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
+                          required
+                        ></textarea>
+                      </div>
+
+                      <div className="form-group" style={{ marginTop: '1rem' }}>
+                        <label>Tech Stack Tags (Comma separated)</label>
+                        <input
+                          type="text"
+                          className="form-input"
+                          value={newProject.tags}
+                          onChange={(e) => setNewProject({ ...newProject, tags: e.target.value })}
+                          placeholder="PyTorch, MONAI, U-Net, FastAPI"
+                        />
+                      </div>
+
+                      <button type="submit" className="submit-btn" style={{ marginTop: '1rem' }}>
+                        <i className="fa-solid fa-plus"></i>
+                        <span>Add Project to Portfolio</span>
+                      </button>
+                    </form>
+                  </div>
+                )}
+
+                {/* Edit & Delete Existing Projects List */}
+                {profileData?.projects?.map((proj, idx) => (
+                  <div className="card" key={idx} style={{ padding: '1.75rem', marginBottom: '1.5rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                      <h4 style={{ fontSize: '1.2rem', color: 'var(--accent-light)' }}>Project #{idx + 1}: {proj.title}</h4>
+                      <button onClick={() => handleDeleteProject(idx)} className="pill-btn outlined-btn" style={{ borderColor: '#f87171', color: '#f87171' }}>
+                        <i className="fa-solid fa-trash"></i>
+                        <span>Delete</span>
+                      </button>
+                    </div>
+
+                    <div className="form-grid">
+                      <div className="form-group">
+                        <label>Title</label>
+                        <input
+                          type="text"
+                          className="form-input"
+                          value={proj.title || ''}
+                          onChange={(e) => handleProjectEdit(idx, 'title', e.target.value)}
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Image URL</label>
+                        <input
+                          type="text"
+                          className="form-input"
+                          value={proj.image || ''}
+                          onChange={(e) => handleProjectEdit(idx, 'image', e.target.value)}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group" style={{ marginTop: '0.75rem' }}>
+                      <label>Description</label>
+                      <textarea
+                        className="form-textarea"
+                        rows={3}
+                        value={proj.description || ''}
+                        onChange={(e) => handleProjectEdit(idx, 'description', e.target.value)}
+                      ></textarea>
+                    </div>
+                  </div>
+                ))}
+
+                <button onClick={saveProfileCMS} className="submit-btn" disabled={savingProfile} style={{ width: '100%', marginTop: '1rem' }}>
+                  <i className="fa-solid fa-floppy-disk"></i>
+                  <span>{savingProfile ? 'Saving Changes...' : 'Save All Projects to MongoDB Live'}</span>
+                </button>
+              </div>
+            )}
+
+            {/* TAB 3: BLOG ENGINE & VIEW ANALYTICS */}
+            {activeTab === 'blogs' && (
+              <div>
+                {/* Blog Analytics Overview Cards */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+                  <div className="card" style={{ padding: '1.5rem' }}>
+                    <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Published Blog Articles</span>
+                    <h2 style={{ fontSize: '2rem', marginTop: '0.25rem' }}>{blogs.length}</h2>
+                  </div>
+                  <div className="card" style={{ padding: '1.5rem' }}>
+                    <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Total Article Views</span>
+                    <h2 style={{ fontSize: '2rem', marginTop: '0.25rem', color: 'var(--accent-light)' }}>
+                      <i className="fa-solid fa-eye" style={{ marginRight: '0.5rem' }}></i>
+                      {totalBlogViews}
+                    </h2>
+                  </div>
+                </div>
+
+                {/* Write New Blog Post Card */}
+                <div className="card" style={{ padding: '2.5rem', marginBottom: '2.5rem' }}>
+                  <h3 style={{ fontSize: '1.4rem', marginBottom: '1.5rem' }}>Publish New Technical Article</h3>
+
+                  {blogMessage && (
+                    <div style={{ padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', background: blogMessage.type === 'success' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)', color: blogMessage.type === 'success' ? '#4ade80' : '#f87171' }}>
+                      {blogMessage.text}
+                    </div>
+                  )}
+
+                  <form onSubmit={handlePublishBlog}>
+                    <div className="form-grid">
+                      <div className="form-group">
+                        <label htmlFor="blogTitle">Article Title</label>
+                        <input
+                          type="text"
+                          id="blogTitle"
+                          className="form-input"
+                          placeholder="e.g. Advancements in U-Net DICOM Segmentation"
+                          value={newBlog.title}
+                          onChange={(e) => setNewBlog({ ...newBlog, title: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="readTime">Estimated Read Time</label>
+                        <input
+                          type="text"
+                          id="readTime"
+                          className="form-input"
+                          value={newBlog.readTime}
+                          onChange={(e) => setNewBlog({ ...newBlog, readTime: e.target.value })}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group" style={{ marginTop: '1rem' }}>
+                      <label htmlFor="excerpt">Short Excerpt / Teaser</label>
+                      <input
+                        type="text"
+                        id="excerpt"
+                        className="form-input"
+                        placeholder="Brief summary displayed on portfolio grid..."
+                        value={newBlog.excerpt}
+                        onChange={(e) => setNewBlog({ ...newBlog, excerpt: e.target.value })}
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group" style={{ marginTop: '1rem' }}>
+                      <label htmlFor="blogContent">Article Content (Markdown / Paragraphs)</label>
+                      <textarea
+                        id="blogContent"
+                        className="form-textarea"
+                        rows={8}
+                        placeholder="Write your research article content here. Separate sections with ### headers..."
+                        value={newBlog.content}
+                        onChange={(e) => setNewBlog({ ...newBlog, content: e.target.value })}
+                        required
+                      ></textarea>
+                    </div>
+
+                    <button type="submit" className="submit-btn" disabled={publishingBlog} style={{ marginTop: '1.5rem' }}>
+                      <i className="fa-solid fa-paper-plane"></i>
+                      <span>{publishingBlog ? 'Publishing Post...' : 'Publish Blog Post Live'}</span>
+                    </button>
+                  </form>
+                </div>
+
+                {/* Blog Analytics & Post List Table */}
+                <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Blog Analytics & Reader Views</h3>
+                <div className="card admin-table-wrapper">
+                  {loadingBlogs ? (
+                    <div style={{ padding: '2rem', textAlign: 'center' }}>Loading blog articles...</div>
+                  ) : blogs.length === 0 ? (
+                    <div style={{ padding: '2rem', textAlign: 'center' }}>No blog posts written yet.</div>
+                  ) : (
+                    <table className="admin-table">
+                      <thead>
+                        <tr>
+                          <th>Title</th>
+                          <th>Read Time</th>
+                          <th>Views Count</th>
+                          <th>Published Date</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {blogs.map(post => (
+                          <tr key={post._id}>
+                            <td>
+                              <strong>{post.title}</strong>
+                              <br />
+                              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>/{post.slug}</span>
+                            </td>
+                            <td>{post.readTime}</td>
+                            <td>
+                              <span className="status-badge status-reviewed" style={{ fontSize: '0.85rem' }}>
+                                <i className="fa-solid fa-eye" style={{ marginRight: '0.3rem' }}></i>
+                                {post.views} Views
+                              </span>
+                            </td>
+                            <td style={{ fontSize: '0.85rem' }}>
+                              {new Date(post.createdAt).toLocaleDateString()}
+                            </td>
+                            <td>
+                              <button onClick={() => handleDeleteBlog(post._id)} className="pill-btn outlined-btn" style={{ padding: '0.2rem 0.6rem', fontSize: '0.8rem', color: '#f87171' }}>
+                                <i className="fa-solid fa-trash"></i>
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* TAB 4: CLIENT PROPOSALS */}
             {activeTab === 'inquiries' && (
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-                  <h3>Client Contract Proposals</h3>
+                  <h3>Client Contracting Proposals</h3>
                   <button onClick={fetchInquiries} className="pill-btn outlined-btn">
                     <i className="fa-solid fa-rotate-right"></i>
                     <span>Refresh</span>
@@ -379,14 +688,9 @@ export default function AdminDashboardPage() {
 
                 <div className="card admin-table-wrapper">
                   {loadingInquiries ? (
-                    <div style={{ padding: '3rem', textAlign: 'center' }}>
-                      <p>Loading inquiries from MongoDB...</p>
-                    </div>
+                    <div style={{ padding: '3rem', textAlign: 'center' }}>Loading inquiries...</div>
                   ) : inquiries.length === 0 ? (
-                    <div style={{ padding: '3rem', textAlign: 'center' }}>
-                      <i className="fa-solid fa-folder-open" style={{ fontSize: '2.5rem', color: 'var(--text-muted)', marginBottom: '1rem' }}></i>
-                      <p>No contract inquiries submitted yet.</p>
-                    </div>
+                    <div style={{ padding: '3rem', textAlign: 'center' }}>No inquiries submitted yet.</div>
                   ) : (
                     <table className="admin-table">
                       <thead>
@@ -412,30 +716,20 @@ export default function AdminDashboardPage() {
                               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{item.clientEmail}</span>
                             </td>
                             <td>
-                              <span className="tech-tag" style={{ display: 'inline-block' }}>{item.projectType}</span>
+                              <span className="tech-tag">{item.projectType}</span>
                             </td>
                             <td style={{ fontWeight: 600 }}>{item.budget}</td>
                             <td style={{ maxWidth: '300px', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
                               {item.description}
                             </td>
                             <td>
-                              <span className={`status-badge status-${item.status}`}>
-                                {item.status}
-                              </span>
+                              <span className={`status-badge status-${item.status}`}>{item.status}</span>
                             </td>
                             <td>
                               <select
                                 value={item.status}
-                                onChange={(e) => updateStatus(item._id, e.target.value)}
-                                style={{
-                                  background: 'var(--bg-secondary)',
-                                  color: 'var(--text-primary)',
-                                  border: '1px solid var(--card-border)',
-                                  borderRadius: '6px',
-                                  padding: '0.3rem 0.5rem',
-                                  fontSize: '0.8rem',
-                                  cursor: 'pointer',
-                                }}
+                                onChange={(e) => updateInquiryStatus(item._id, e.target.value)}
+                                style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--card-border)', borderRadius: '6px', padding: '0.3rem' }}
                               >
                                 <option value="pending">Pending</option>
                                 <option value="reviewed">Reviewed</option>

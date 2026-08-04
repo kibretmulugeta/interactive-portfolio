@@ -1,25 +1,32 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 
 export default function Home() {
   const [profile, setProfile] = useState(null);
+  const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchProfile();
+    fetchProfileAndBlogs();
   }, []);
 
-  const fetchProfile = async () => {
+  const fetchProfileAndBlogs = async () => {
     try {
-      const res = await fetch('/api/profile');
-      const data = await res.json();
-      if (data.data) {
-        setProfile(data.data);
-      }
+      const [profileRes, blogRes] = await Promise.all([
+        fetch('/api/profile'),
+        fetch('/api/blogs'),
+      ]);
+
+      const profileData = await profileRes.json();
+      const blogData = await blogRes.json();
+
+      if (profileData.data) setProfile(profileData.data);
+      if (blogData.data) setBlogs(blogData.data);
     } catch (err) {
-      console.error('Error fetching profile:', err);
+      console.error('Error fetching data:', err);
     } finally {
       setLoading(false);
     }
@@ -30,6 +37,7 @@ export default function Home() {
     title: 'AI Engineer | Medical Imaging Researcher',
     bio: 'Passionate about designing cutting-edge deep learning solutions for complex healthcare challenges. Specialized in U-Net brain MRI segmentation and reward-driven neural plasticity-inspired optimization algorithms to enhance diagnostic precision and algorithmic learning efficiency.',
     photoUrl: '/assets/images/kibret_photo.jpg',
+    resumeUrl: '/assets/Kibret_Mulugeta_Resume.pdf',
     badgeText: 'Available for Research & Contracting',
     githubUrl: 'https://github.com',
     linkedinUrl: 'https://linkedin.com',
@@ -67,30 +75,40 @@ export default function Home() {
 
                 <div className="hero-content-col">
                   <h1 className="hero-name">{hero.name}</h1>
-                  <h2 className="hero-subtitle">
-                    {hero.title}
-                  </h2>
+                  <h2 className="hero-subtitle">{hero.title}</h2>
 
-                  <p className="hero-bio">
-                    {hero.bio}
-                  </p>
+                  <p className="hero-bio">{hero.bio}</p>
 
-                  <div className="hero-socials">
-                    <a href={hero.githubUrl} target="_blank" rel="noopener noreferrer" className="social-icon-btn" aria-label="GitHub">
-                      <i className="fa-brands fa-github"></i>
+                  {/* Hero Actions & Social Links */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+                    <a
+                      href={hero.resumeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="pill-btn outlined-btn"
+                      style={{ background: 'var(--accent-color)', color: '#ffffff', borderColor: 'transparent' }}
+                    >
+                      <i className="fa-solid fa-file-arrow-down"></i>
+                      <span>Download CV / Resume</span>
                     </a>
-                    <a href={hero.linkedinUrl} target="_blank" rel="noopener noreferrer" className="social-icon-btn" aria-label="LinkedIn">
-                      <i className="fa-brands fa-linkedin-in"></i>
-                    </a>
-                    <a href={hero.scholarUrl} target="_blank" rel="noopener noreferrer" className="social-icon-btn" aria-label="Google Scholar">
-                      <i className="fa-solid fa-graduation-cap"></i>
-                    </a>
-                    <a href={hero.twitterUrl} target="_blank" rel="noopener noreferrer" className="social-icon-btn" aria-label="Twitter">
-                      <i className="fa-brands fa-x-twitter"></i>
-                    </a>
-                    <a href={`mailto:${hero.email}`} className="social-icon-btn" aria-label="Email">
-                      <i className="fa-regular fa-envelope"></i>
-                    </a>
+
+                    <div className="hero-socials">
+                      <a href={hero.githubUrl} target="_blank" rel="noopener noreferrer" className="social-icon-btn" aria-label="GitHub">
+                        <i className="fa-brands fa-github"></i>
+                      </a>
+                      <a href={hero.linkedinUrl} target="_blank" rel="noopener noreferrer" className="social-icon-btn" aria-label="LinkedIn">
+                        <i className="fa-brands fa-linkedin-in"></i>
+                      </a>
+                      <a href={hero.scholarUrl} target="_blank" rel="noopener noreferrer" className="social-icon-btn" aria-label="Google Scholar">
+                        <i className="fa-solid fa-graduation-cap"></i>
+                      </a>
+                      <a href={hero.twitterUrl} target="_blank" rel="noopener noreferrer" className="social-icon-btn" aria-label="Twitter">
+                        <i className="fa-brands fa-x-twitter"></i>
+                      </a>
+                      <a href={`mailto:${hero.email}`} className="social-icon-btn" aria-label="Email">
+                        <i className="fa-regular fa-envelope"></i>
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -105,44 +123,41 @@ export default function Home() {
           <div className="connector-line"></div>
         </div>
 
-        {/* Creativity Section */}
+        {/* Blog & Insights Section */}
         <section className="section creativity-section" id="creativity">
           <div className="container">
             <div className="section-header">
-              <h2 className="section-title">Creativity & Insights</h2>
-              <p className="section-subtitle">Exploring deep learning, sharing knowledge, and fostering open technical communities.</p>
+              <h2 className="section-title">Technical Blogs & Insights</h2>
+              <p className="section-subtitle">Articles covering U-Net medical segmentation, neural plasticity principles, and modern PyTorch engineering practices.</p>
             </div>
 
-            <div className="creativity-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
-              <div className="card creativity-card" style={{ padding: '2rem', textAlign: 'center' }}>
-                <div className="creativity-icon-wrapper" style={{ fontSize: '2rem', color: 'var(--accent-color)', marginBottom: '1rem' }}>
-                  <i className="fa-solid fa-newspaper"></i>
-                </div>
-                <h3 className="creativity-title">Blog</h3>
-                <p className="creativity-description" style={{ color: 'var(--text-secondary)', marginTop: '0.5rem' }}>
-                  In-depth articles covering U-Net medical segmentation, neural plasticity principles, and modern PyTorch engineering practices.
-                </p>
-              </div>
+            <div className="creativity-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.75rem' }}>
+              {blogs.map((b, idx) => (
+                <div className="card creativity-card" key={idx} style={{ padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                      <span className="pill-badge">
+                        <span className="badge-text">{b.readTime}</span>
+                      </span>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--accent-light)', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                        <i className="fa-solid fa-eye"></i>
+                        {b.views} views
+                      </span>
+                    </div>
+                    <h3 className="creativity-title" style={{ fontSize: '1.25rem', marginBottom: '0.75rem', textAlign: 'left' }}>
+                      {b.title}
+                    </h3>
+                    <p className="creativity-description" style={{ color: 'var(--text-secondary)', textAlign: 'left', fontSize: '0.925rem' }}>
+                      {b.excerpt}
+                    </p>
+                  </div>
 
-              <div className="card creativity-card" style={{ padding: '2rem', textAlign: 'center' }}>
-                <div className="creativity-icon-wrapper" style={{ fontSize: '2rem', color: 'var(--accent-color)', marginBottom: '1rem' }}>
-                  <i className="fa-solid fa-podcast"></i>
+                  <Link href={`/blog/${b.slug}`} className="pill-btn outlined-btn" style={{ marginTop: '1.5rem', alignSelf: 'flex-start' }}>
+                    <span>Read Article</span>
+                    <i className="fa-solid fa-arrow-right"></i>
+                  </Link>
                 </div>
-                <h3 className="creativity-title">Podcast</h3>
-                <p className="creativity-description" style={{ color: 'var(--text-secondary)', marginTop: '0.5rem' }}>
-                  Conversations discussing AI breakthrough papers, medical imaging diagnostics, and career navigation for emerging ML researchers.
-                </p>
-              </div>
-
-              <div className="card creativity-card" style={{ padding: '2rem', textAlign: 'center' }}>
-                <div className="creativity-icon-wrapper" style={{ fontSize: '2rem', color: 'var(--accent-color)', marginBottom: '1rem' }}>
-                  <i className="fa-solid fa-users-gear"></i>
-                </div>
-                <h3 className="creativity-title">Community</h3>
-                <p className="creativity-description" style={{ color: 'var(--text-secondary)', marginTop: '0.5rem' }}>
-                  Building collaborative open-source toolkits, organizing local deep learning workshops, and mentoring young African engineers.
-                </p>
-              </div>
+              ))}
             </div>
           </div>
         </section>

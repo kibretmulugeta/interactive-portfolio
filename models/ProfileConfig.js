@@ -11,6 +11,7 @@ const ProfileConfigSchema = new mongoose.Schema(
           'Passionate about designing cutting-edge deep learning solutions for complex healthcare challenges. Specialized in U-Net brain MRI segmentation and reward-driven neural plasticity-inspired optimization algorithms to enhance diagnostic precision and algorithmic learning efficiency.',
       },
       photoUrl: { type: String, default: '/assets/images/kibret_photo.jpg' },
+      resumeUrl: { type: String, default: '/assets/Kibret_Mulugeta_Resume.pdf' },
       badgeText: { type: String, default: 'Available for Research & Contracting' },
       githubUrl: { type: String, default: 'https://github.com' },
       linkedinUrl: { type: String, default: 'https://linkedin.com' },
