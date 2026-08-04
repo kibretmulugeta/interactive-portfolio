@@ -23,13 +23,14 @@ export default function AdminDashboardPage() {
   const [blogs, setBlogs] = useState([]);
   const [loadingBlogs, setLoadingBlogs] = useState(true);
   const [newBlog, setNewBlog] = useState({ title: '', category: 'scientific', excerpt: '', content: '', readTime: '5 min read' });
-  const [editingBlog, setEditingBlog] = useState(null); // Currently selected blog for editing
+  const [editingBlog, setEditingBlog] = useState(null);
   const [publishingBlog, setPublishingBlog] = useState(false);
   const [blogMessage, setBlogMessage] = useState(null);
 
   // New Project Form State
   const [newProject, setNewProject] = useState({ title: '', description: '', image: '', tags: '', liveUrl: '#', githubUrl: 'https://github.com/kibretmulugeta' });
   const [showAddProject, setShowAddProject] = useState(false);
+  const [projectMessage, setProjectMessage] = useState(null);
 
   // Inquiries State
   const [inquiries, setInquiries] = useState([]);
@@ -186,6 +187,26 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const saveProjectsCMS = async (e) => {
+    if (e) e.preventDefault();
+    setSavingProfile(true);
+    setProjectMessage(null);
+    try {
+      const res = await fetch('/api/admin/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(profileData),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || 'Failed to save projects.');
+      setProjectMessage({ type: 'success', text: 'Project portfolio changes saved live to MongoDB!' });
+    } catch (err) {
+      setProjectMessage({ type: 'error', text: err.message });
+    } finally {
+      setSavingProfile(false);
+    }
+  };
+
   // Project CRUD Handlers
   const handleAddProject = (e) => {
     e.preventDefault();
@@ -199,13 +220,17 @@ export default function AdminDashboardPage() {
 
     setNewProject({ title: '', description: '', image: '', tags: '', liveUrl: '#', githubUrl: 'https://github.com/kibretmulugeta' });
     setShowAddProject(false);
-    alert('Project added to list! Click "Save All Projects to MongoDB Live" to publish changes.');
+    setProjectMessage({ type: 'success', text: 'New project added! Click "Save All Projects Live to MongoDB" below to publish.' });
   };
 
   const handleProjectEdit = (index, field, value) => {
     setProfileData(prev => {
       const updated = [...(prev.projects || [])];
-      updated[index] = { ...updated[index], [field]: value };
+      let val = value;
+      if (field === 'tags' && typeof value === 'string') {
+        val = value.split(',').map(t => t.trim()).filter(Boolean);
+      }
+      updated[index] = { ...updated[index], [field]: val };
       return { ...prev, projects: updated };
     });
   };
@@ -216,6 +241,7 @@ export default function AdminDashboardPage() {
         ...prev,
         projects: prev.projects.filter((_, idx) => idx !== index),
       }));
+      setProjectMessage({ type: 'success', text: 'Project removed. Click "Save All Projects Live to MongoDB" to update database.' });
     }
   };
 
@@ -619,16 +645,28 @@ export default function AdminDashboardPage() {
               </div>
             )}
 
-            {/* TAB 2: FULL PROJECT MANAGER */}
+            {/* TAB 2: FULL PROJECT MANAGER (ADD, EDIT, DELETE) */}
             {activeTab === 'projects' && (
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
                   <h3>Project Portfolio Manager</h3>
-                  <button onClick={() => setShowAddProject(!showAddProject)} className="pill-btn outlined-btn" style={{ background: 'var(--accent-color)', color: '#fff' }}>
-                    <i className="fa-solid fa-plus"></i>
-                    <span>{showAddProject ? 'Close Form' : 'Add New Project'}</span>
-                  </button>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <button onClick={() => setShowAddProject(!showAddProject)} className="pill-btn outlined-btn" style={{ background: 'var(--accent-color)', color: '#fff' }}>
+                      <i className="fa-solid fa-plus"></i>
+                      <span>{showAddProject ? 'Close Form' : 'Add New Project'}</span>
+                    </button>
+                    <button onClick={saveProjectsCMS} className="pill-btn" style={{ background: '#22c55e', color: '#fff' }} disabled={savingProfile}>
+                      <i className="fa-solid fa-floppy-disk"></i>
+                      <span>{savingProfile ? 'Saving...' : 'Save All Projects Live'}</span>
+                    </button>
+                  </div>
                 </div>
+
+                {projectMessage && (
+                  <div style={{ padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', background: projectMessage.type === 'success' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)', color: projectMessage.type === 'success' ? '#4ade80' : '#f87171' }}>
+                    {projectMessage.text}
+                  </div>
+                )}
 
                 {showAddProject && (
                   <div className="card" style={{ padding: '2rem', marginBottom: '2rem', border: '1px solid var(--accent-color)' }}>
@@ -689,18 +727,18 @@ export default function AdminDashboardPage() {
                 )}
 
                 {profileData?.projects?.map((proj, idx) => (
-                  <div className="card" key={idx} style={{ padding: '1.75rem', marginBottom: '1.5rem' }}>
+                  <div className="card" key={idx} style={{ padding: '1.75rem', marginBottom: '1.5rem', border: '1px solid var(--card-border)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                       <h4 style={{ fontSize: '1.2rem', color: 'var(--accent-light)' }}>Project #{idx + 1}: {proj.title}</h4>
                       <button onClick={() => handleDeleteProject(idx)} className="pill-btn outlined-btn" style={{ borderColor: '#f87171', color: '#f87171' }}>
                         <i className="fa-solid fa-trash"></i>
-                        <span>Delete</span>
+                        <span>Delete Project</span>
                       </button>
                     </div>
 
                     <div className="form-grid">
                       <div className="form-group">
-                        <label>Title</label>
+                        <label>Project Title</label>
                         <input
                           type="text"
                           className="form-input"
@@ -709,7 +747,7 @@ export default function AdminDashboardPage() {
                         />
                       </div>
                       <div className="form-group">
-                        <label>Image URL</label>
+                        <label>Image URL / Path</label>
                         <input
                           type="text"
                           className="form-input"
@@ -728,12 +766,23 @@ export default function AdminDashboardPage() {
                         onChange={(e) => handleProjectEdit(idx, 'description', e.target.value)}
                       ></textarea>
                     </div>
+
+                    <div className="form-group" style={{ marginTop: '0.75rem' }}>
+                      <label>Tech Stack Tags (Comma separated)</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        value={Array.isArray(proj.tags) ? proj.tags.join(', ') : (proj.tags || '')}
+                        onChange={(e) => handleProjectEdit(idx, 'tags', e.target.value)}
+                        placeholder="U-Net, MONAI, PyTorch"
+                      />
+                    </div>
                   </div>
                 ))}
 
-                <button onClick={saveProfileCMS} className="submit-btn" disabled={savingProfile} style={{ width: '100%', marginTop: '1rem' }}>
+                <button onClick={saveProjectsCMS} className="submit-btn" disabled={savingProfile} style={{ width: '100%', marginTop: '1rem', background: '#22c55e' }}>
                   <i className="fa-solid fa-floppy-disk"></i>
-                  <span>{savingProfile ? 'Saving Changes...' : 'Save All Projects to MongoDB Live'}</span>
+                  <span>{savingProfile ? 'Saving Changes...' : 'Save All Projects Live to MongoDB'}</span>
                 </button>
               </div>
             )}
