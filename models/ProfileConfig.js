@@ -20,7 +20,7 @@ const ProfileConfigSchema = new mongoose.Schema(
       email: { type: String, default: 'kibretmail@gmail.com' },
     },
     resumeDataUri: {
-      type: String, // Base64 PDF storage for Vercel serverless persistence
+      type: String,
     },
     resumeDownloads: {
       type: Number,
@@ -29,7 +29,9 @@ const ProfileConfigSchema = new mongoose.Schema(
     resumeDownloadLogs: [
       {
         downloadedAt: { type: Date, default: Date.now },
-        ip: { type: String, default: 'Anonymous Visitor' },
+        clientName: { type: String, default: 'Anonymous Visitor' },
+        clientEmail: { type: String, default: 'Unknown Email' },
+        ip: { type: String, default: 'Visitor IP' },
         userAgent: String,
       },
     ],

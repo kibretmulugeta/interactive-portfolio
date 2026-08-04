@@ -108,7 +108,9 @@ export default function BlogPostPage({ params }) {
             >
               {post.content.split('\n\n').map((paragraph, idx) => {
                 if (paragraph.startsWith('### ')) {
-                  return <h3 key={idx} style={{ fontSize: '1.4rem', margin: '1.5rem 0 0.75rem 0', color: 'var(--accent-light)' }}>{paragraph.replace('### ', '')}</h3>;
+                  return (
+                    <h3 key={idx} style={{ fontSize: '1.4rem', margin: '1.5rem 0 0.75rem 0', color: 'var(--accent-light)' }} dangerouslySetInnerHTML={{ __html: paragraph.replace('### ', '') }}></h3>
+                  );
                 }
                 if (paragraph.startsWith('```')) {
                   return (
@@ -117,7 +119,9 @@ export default function BlogPostPage({ params }) {
                     </pre>
                   );
                 }
-                return <p key={idx} style={{ marginBottom: '1.25rem', color: 'var(--text-secondary)' }}>{paragraph}</p>;
+                return (
+                  <p key={idx} style={{ marginBottom: '1.25rem', color: 'var(--text-secondary)' }} dangerouslySetInnerHTML={{ __html: paragraph }}></p>
+                );
               })}
             </div>
           </div>

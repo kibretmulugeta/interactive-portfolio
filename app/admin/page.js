@@ -85,6 +85,47 @@ export default function AdminDashboardPage() {
     }
   };
 
+  // Insert Rich Formatting Tags Helper into Textarea
+  const insertFormattingTag = (tagType, isEditing = false) => {
+    const targetState = isEditing ? editingBlog : newBlog;
+    const setState = isEditing ? setEditingBlog : setNewBlog;
+
+    let prefix = '';
+    let suffix = '';
+
+    switch (tagType) {
+      case 'heading':
+        prefix = '\n### ';
+        break;
+      case 'bold':
+        prefix = '<strong>';
+        suffix = '</strong>';
+        break;
+      case 'italic':
+        prefix = '<em>';
+        suffix = '</em>';
+        break;
+      case 'underline':
+        prefix = '<u>';
+        suffix = '</u>';
+        break;
+      case 'list':
+        prefix = '\n- ';
+        break;
+      case 'code':
+        prefix = '<code>';
+        suffix = '</code>';
+        break;
+      default:
+        break;
+    }
+
+    setState(prev => ({
+      ...prev,
+      content: (prev.content || '') + `${prefix}Selected Text${suffix}`,
+    }));
+  };
+
   // Resume PDF File Upload Handler
   const handleResumePdfUpload = async (e) => {
     e.preventDefault();
@@ -400,7 +441,7 @@ export default function AdminDashboardPage() {
                 {/* Resume Downloads Notification Summary Cards */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
                   <div className="card" style={{ padding: '1.5rem', background: 'var(--card-bg)' }}>
-                    <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Total Resume Downloads</span>
+                    <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Total Verified Resume Downloads</span>
                     <h2 style={{ fontSize: '2.2rem', marginTop: '0.25rem', color: '#4ade80' }}>
                       <i className="fa-solid fa-file-arrow-down" style={{ marginRight: '0.5rem' }}></i>
                       {totalResumeDownloads}
@@ -408,9 +449,9 @@ export default function AdminDashboardPage() {
                   </div>
 
                   <div className="card" style={{ padding: '1.5rem', background: 'var(--card-bg)' }}>
-                    <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Latest Download Notification</span>
+                    <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Latest Client Download</span>
                     <h4 style={{ fontSize: '1.1rem', marginTop: '0.5rem', color: 'var(--accent-light)' }}>
-                      {downloadLogs.length > 0 ? new Date(downloadLogs[downloadLogs.length - 1].downloadedAt).toLocaleString() : 'No downloads recorded yet'}
+                      {downloadLogs.length > 0 ? `${downloadLogs[downloadLogs.length - 1].clientName} (${downloadLogs[downloadLogs.length - 1].clientEmail})` : 'No downloads recorded yet'}
                     </h4>
                   </div>
                 </div>
@@ -446,25 +487,26 @@ export default function AdminDashboardPage() {
                   </form>
                 </div>
 
-                {/* Live Download Activity Log Feed */}
+                {/* Live Verified Client Download Activity Log Feed */}
                 <div className="card" style={{ padding: '2rem', marginBottom: '2rem' }}>
                   <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <i className="fa-solid fa-bell" style={{ color: '#facc15' }}></i>
-                    <span>Client Resume Download Notifications</span>
+                    <span>Verified Client Resume Download Notifications</span>
                   </h3>
 
                   {downloadLogs.length === 0 ? (
                     <p style={{ color: 'var(--text-muted)' }}>No client download logs recorded yet.</p>
                   ) : (
-                    <div style={{ maxHeight: '220px', overflowY: 'auto' }}>
+                    <div style={{ maxHeight: '250px', overflowY: 'auto' }}>
                       {downloadLogs.slice().reverse().map((log, idx) => (
-                        <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 1rem', background: 'var(--bg-secondary)', borderRadius: '8px', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
+                        <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.85rem 1rem', background: 'var(--bg-secondary)', borderRadius: '8px', marginBottom: '0.5rem', fontSize: '0.875rem', flexWrap: 'wrap', gap: '0.5rem' }}>
                           <div>
-                            <span style={{ color: '#4ade80', fontWeight: 600 }}>Client downloaded CV / Resume</span>
+                            <span style={{ color: '#4ade80', fontWeight: 600 }}>{log.clientName || 'Verified Client'}</span> &nbsp;
+                            <span style={{ color: 'var(--accent-light)', fontSize: '0.85rem' }}>&lt;{log.clientEmail || 'No Email'}&gt;</span>
                             <br />
-                            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{log.ip} • {log.userAgent?.split(' ')[0] || 'Browser'}</span>
+                            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Downloaded CV PDF • {log.ip}</span>
                           </div>
-                          <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
+                          <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
                             {new Date(log.downloadedAt).toLocaleString()}
                           </span>
                         </div>
@@ -511,7 +553,7 @@ export default function AdminDashboardPage() {
                             required
                           />
                           <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                            Set to <code>/api/resume/download</code> to track every client download automatically.
+                            Set to <code>/api/resume/download</code> to require Google sign-in and track client downloads.
                           </span>
                         </div>
                       </div>
@@ -683,7 +725,7 @@ export default function AdminDashboardPage() {
               </div>
             )}
 
-            {/* TAB 3: BLOG ENGINE & VIEW ANALYTICS + ARTICLE EDITING */}
+            {/* TAB 3: BLOG ENGINE & VIEW ANALYTICS + RICH TEXT TOOLBAR */}
             {activeTab === 'blogs' && (
               <div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
@@ -743,7 +785,18 @@ export default function AdminDashboardPage() {
                       </div>
 
                       <div className="form-group" style={{ marginTop: '1rem' }}>
-                        <label>Article Content (Markdown / Text)</label>
+                        <label>Article Content</label>
+
+                        {/* Rich Formatting Toolbar */}
+                        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem', flexWrap: 'wrap', background: 'var(--bg-secondary)', padding: '0.5rem', borderRadius: '8px' }}>
+                          <button type="button" onClick={() => insertFormattingTag('heading', true)} className="pill-btn outlined-btn" style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem' }}><strong>H3 Heading</strong></button>
+                          <button type="button" onClick={() => insertFormattingTag('bold', true)} className="pill-btn outlined-btn" style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem' }}><strong>Bold</strong></button>
+                          <button type="button" onClick={() => insertFormattingTag('italic', true)} className="pill-btn outlined-btn" style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem' }}><em>Italic</em></button>
+                          <button type="button" onClick={() => insertFormattingTag('underline', true)} className="pill-btn outlined-btn" style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem' }}><u>Underline</u></button>
+                          <button type="button" onClick={() => insertFormattingTag('list', true)} className="pill-btn outlined-btn" style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem' }}>• Bullet</button>
+                          <button type="button" onClick={() => insertFormattingTag('code', true)} className="pill-btn outlined-btn" style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem' }}><code>&lt;Code&gt;</code></button>
+                        </div>
+
                         <textarea
                           className="form-textarea"
                           rows={12}
@@ -811,6 +864,17 @@ export default function AdminDashboardPage() {
 
                       <div className="form-group" style={{ marginTop: '1rem' }}>
                         <label htmlFor="blogContent">Article Content</label>
+
+                        {/* Rich Formatting Toolbar */}
+                        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem', flexWrap: 'wrap', background: 'var(--bg-secondary)', padding: '0.5rem', borderRadius: '8px' }}>
+                          <button type="button" onClick={() => insertFormattingTag('heading', false)} className="pill-btn outlined-btn" style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem' }}><strong>H3 Heading</strong></button>
+                          <button type="button" onClick={() => insertFormattingTag('bold', false)} className="pill-btn outlined-btn" style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem' }}><strong>Bold</strong></button>
+                          <button type="button" onClick={() => insertFormattingTag('italic', false)} className="pill-btn outlined-btn" style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem' }}><em>Italic</em></button>
+                          <button type="button" onClick={() => insertFormattingTag('underline', false)} className="pill-btn outlined-btn" style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem' }}><u>Underline</u></button>
+                          <button type="button" onClick={() => insertFormattingTag('list', false)} className="pill-btn outlined-btn" style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem' }}>• Bullet</button>
+                          <button type="button" onClick={() => insertFormattingTag('code', false)} className="pill-btn outlined-btn" style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem' }}><code>&lt;Code&gt;</code></button>
+                        </div>
+
                         <textarea
                           id="blogContent"
                           className="form-textarea"

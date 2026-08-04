@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { getSession } from '@auth0/nextjs-auth0';
 import connectToDatabase from '@/lib/mongodb';
 import ProfileConfig from '@/models/ProfileConfig';
 
@@ -6,20 +7,33 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(req) {
   try {
+    const res = new NextResponse();
+    const session = await getSession(req, res);
+
+    // Enforce Google / Auth0 Authentication before allowing CV download
+    if (!session || !session.user) {
+      const loginUrl = new URL('/api/auth/login', req.url);
+      loginUrl.searchParams.set('returnTo', '/api/resume/download');
+      return NextResponse.redirect(loginUrl);
+    }
+
+    const clientName = session.user.name || session.user.nickname || 'Client Visitor';
+    const clientEmail = session.user.email || 'No Email Provided';
+
     await connectToDatabase();
 
     const userAgent = req.headers.get('user-agent') || 'Browser Client';
     const forwarded = req.headers.get('x-forwarded-for');
     const ip = forwarded ? forwarded.split(',')[0] : 'Visitor';
 
-    // Atomically increment resumeDownloads count and append log entry
+    // Atomically increment resumeDownloads count and append client download notification log
     const config = await ProfileConfig.findOneAndUpdate(
       {},
       {
         $inc: { resumeDownloads: 1 },
         $push: {
           resumeDownloadLogs: {
-            $each: [{ downloadedAt: new Date(), ip, userAgent }],
+            $each: [{ downloadedAt: new Date(), clientName, clientEmail, ip, userAgent }],
             $slice: -50, // Keep last 50 download notifications
           },
         },
