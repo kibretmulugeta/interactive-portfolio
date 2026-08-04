@@ -6,7 +6,7 @@ import Navbar from '@/components/Navbar';
 
 export default function AdminDashboardPage() {
   const { user, isLoading } = useUser();
-  const [activeTab, setActiveTab] = useState('profile'); // 'profile', 'projects', 'blogs', 'inquiries'
+  const [activeTab, setActiveTab] = useState('profile'); // 'profile', 'projects', 'events', 'blogs', 'inquiries'
   
   // Profile & Resume State
   const [profileData, setProfileData] = useState(null);
@@ -27,10 +27,15 @@ export default function AdminDashboardPage() {
   const [publishingBlog, setPublishingBlog] = useState(false);
   const [blogMessage, setBlogMessage] = useState(null);
 
-  // New Project Form State
+  // Project Form State
   const [newProject, setNewProject] = useState({ title: '', description: '', image: '', tags: '', liveUrl: '#', githubUrl: 'https://github.com/kibretmulugeta' });
   const [showAddProject, setShowAddProject] = useState(false);
   const [projectMessage, setProjectMessage] = useState(null);
+
+  // Events Form State
+  const [newEvent, setNewEvent] = useState({ title: '', date: '', text: '', image: '' });
+  const [showAddEvent, setShowAddEvent] = useState(false);
+  const [eventMessage, setEventMessage] = useState(null);
 
   // Inquiries State
   const [inquiries, setInquiries] = useState([]);
@@ -207,6 +212,26 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const saveEventsCMS = async (e) => {
+    if (e) e.preventDefault();
+    setSavingProfile(true);
+    setEventMessage(null);
+    try {
+      const res = await fetch('/api/admin/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(profileData),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || 'Failed to save events.');
+      setEventMessage({ type: 'success', text: 'Events & Podcasts changes saved live to MongoDB!' });
+    } catch (err) {
+      setEventMessage({ type: 'error', text: err.message });
+    } finally {
+      setSavingProfile(false);
+    }
+  };
+
   // Project CRUD Handlers
   const handleAddProject = (e) => {
     e.preventDefault();
@@ -242,6 +267,60 @@ export default function AdminDashboardPage() {
         projects: prev.projects.filter((_, idx) => idx !== index),
       }));
       setProjectMessage({ type: 'success', text: 'Project removed. Click "Save All Projects Live to MongoDB" to update database.' });
+    }
+  };
+
+  // Event Photo Upload & Handlers
+  const handleEventPhotoUpload = (index, file) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUri = e.target.result;
+      setProfileData(prev => {
+        const updated = [...(prev.events || [])];
+        updated[index] = { ...updated[index], image: dataUri };
+        return { ...prev, events: updated };
+      });
+      setEventMessage({ type: 'success', text: `Photo attached for Event #${index + 1}! Click "Save All Events Live to MongoDB" to publish.` });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleNewEventPhotoUpload = (file) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setNewEvent(prev => ({ ...prev, image: e.target.result }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleEventEdit = (index, field, value) => {
+    setProfileData(prev => {
+      const updated = [...(prev.events || [])];
+      updated[index] = { ...updated[index], [field]: value };
+      return { ...prev, events: updated };
+    });
+  };
+
+  const handleAddEvent = (e) => {
+    e.preventDefault();
+    setProfileData(prev => ({
+      ...prev,
+      events: [...(prev.events || []), newEvent],
+    }));
+    setNewEvent({ title: '', date: '', text: '', image: '' });
+    setShowAddEvent(false);
+    setEventMessage({ type: 'success', text: 'New event added! Click "Save All Events Live to MongoDB" to publish.' });
+  };
+
+  const handleDeleteEvent = (index) => {
+    if (confirm('Are you sure you want to delete this event?')) {
+      setProfileData(prev => ({
+        ...prev,
+        events: prev.events.filter((_, idx) => idx !== index),
+      }));
+      setEventMessage({ type: 'success', text: 'Event deleted. Click "Save All Events Live to MongoDB" to update database.' });
     }
   };
 
@@ -443,7 +522,20 @@ export default function AdminDashboardPage() {
                   }}
                 >
                   <i className="fa-solid fa-diagram-project"></i>
-                  <span>Manage Projects ({profileData?.projects?.length || 0})</span>
+                  <span>Projects ({profileData?.projects?.length || 0})</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('events')}
+                  className="pill-btn"
+                  style={{
+                    background: activeTab === 'events' ? 'var(--accent-color)' : 'var(--bg-secondary)',
+                    color: '#fff',
+                    border: '1px solid var(--card-border)',
+                  }}
+                >
+                  <i className="fa-solid fa-calendar-days"></i>
+                  <span>Events & Photos ({profileData?.events?.length || 0})</span>
                 </button>
 
                 <button
@@ -787,7 +879,180 @@ export default function AdminDashboardPage() {
               </div>
             )}
 
-            {/* TAB 3: BLOG ENGINE & VIEW ANALYTICS + CATEGORIES & RICH TEXT TOOLBAR */}
+            {/* TAB 3: EVENTS & PODCASTS MANAGER + DIRECT PHOTO UPLOAD */}
+            {activeTab === 'events' && (
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+                  <h3>Events & Podcasts Photo Manager</h3>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <button onClick={() => setShowAddEvent(!showAddEvent)} className="pill-btn outlined-btn" style={{ background: 'var(--accent-color)', color: '#fff' }}>
+                      <i className="fa-solid fa-plus"></i>
+                      <span>{showAddEvent ? 'Close Form' : 'Add New Event'}</span>
+                    </button>
+                    <button onClick={saveEventsCMS} className="pill-btn" style={{ background: '#22c55e', color: '#fff' }} disabled={savingProfile}>
+                      <i className="fa-solid fa-floppy-disk"></i>
+                      <span>{savingProfile ? 'Saving...' : 'Save All Events Live'}</span>
+                    </button>
+                  </div>
+                </div>
+
+                {eventMessage && (
+                  <div style={{ padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', background: eventMessage.type === 'success' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)', color: eventMessage.type === 'success' ? '#4ade80' : '#f87171' }}>
+                    {eventMessage.text}
+                  </div>
+                )}
+
+                {showAddEvent && (
+                  <div className="card" style={{ padding: '2rem', marginBottom: '2rem', border: '1px solid var(--accent-color)' }}>
+                    <h4 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--accent-light)' }}>Add New Event / Podcast</h4>
+                    <form onSubmit={handleAddEvent}>
+                      <div className="form-grid">
+                        <div className="form-group">
+                          <label>Event Title</label>
+                          <input
+                            type="text"
+                            className="form-input"
+                            value={newEvent.title}
+                            onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
+                            placeholder="e.g. Keynote Speaker on Medical AI"
+                            required
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Event Date</label>
+                          <input
+                            type="text"
+                            className="form-input"
+                            value={newEvent.date}
+                            onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
+                            placeholder="e.g. March 2025"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div className="form-group" style={{ marginTop: '1rem' }}>
+                        <label>Description / Text</label>
+                        <textarea
+                          className="form-textarea"
+                          rows={3}
+                          value={newEvent.text}
+                          onChange={(e) => setNewEvent({ ...newEvent, text: e.target.value })}
+                          required
+                        ></textarea>
+                      </div>
+
+                      <div className="form-group" style={{ marginTop: '1rem' }}>
+                        <label>Event Photo (Upload Image File OR Enter URL)</label>
+                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleNewEventPhotoUpload(e.target.files[0])}
+                            style={{ padding: '0.5rem', background: 'var(--bg-secondary)', borderRadius: '8px' }}
+                          />
+                          <input
+                            type="text"
+                            className="form-input"
+                            value={newEvent.image}
+                            onChange={(e) => setNewEvent({ ...newEvent, image: e.target.value })}
+                            placeholder="or paste image URL / Data URI..."
+                            style={{ flex: 1 }}
+                          />
+                        </div>
+                        {newEvent.image && (
+                          <div style={{ marginTop: '0.75rem' }}>
+                            <img src={newEvent.image} alt="Preview" style={{ height: '80px', borderRadius: '8px', objectFit: 'cover' }} />
+                          </div>
+                        )}
+                      </div>
+
+                      <button type="submit" className="submit-btn" style={{ marginTop: '1rem' }}>
+                        <i className="fa-solid fa-plus"></i>
+                        <span>Add Event</span>
+                      </button>
+                    </form>
+                  </div>
+                )}
+
+                {profileData?.events?.map((ev, idx) => (
+                  <div className="card" key={idx} style={{ padding: '1.75rem', marginBottom: '1.5rem', border: '1px solid var(--card-border)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                      <h4 style={{ fontSize: '1.2rem', color: 'var(--accent-light)' }}>Event #{idx + 1}: {ev.title}</h4>
+                      <button onClick={() => handleDeleteEvent(idx)} className="pill-btn outlined-btn" style={{ borderColor: '#f87171', color: '#f87171' }}>
+                        <i className="fa-solid fa-trash"></i>
+                        <span>Delete Event</span>
+                      </button>
+                    </div>
+
+                    <div className="form-grid">
+                      <div className="form-group">
+                        <label>Event Title</label>
+                        <input
+                          type="text"
+                          className="form-input"
+                          value={ev.title || ''}
+                          onChange={(e) => handleEventEdit(idx, 'title', e.target.value)}
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Event Date</label>
+                        <input
+                          type="text"
+                          className="form-input"
+                          value={ev.date || ''}
+                          onChange={(e) => handleEventEdit(idx, 'date', e.target.value)}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group" style={{ marginTop: '0.75rem' }}>
+                      <label>Description / Text</label>
+                      <textarea
+                        className="form-textarea"
+                        rows={2}
+                        value={ev.text || ''}
+                        onChange={(e) => handleEventEdit(idx, 'text', e.target.value)}
+                      ></textarea>
+                    </div>
+
+                    {/* Photo Upload & Preview for existing event */}
+                    <div className="form-group" style={{ marginTop: '0.75rem' }}>
+                      <label>📷 Upload Event Photo / Image</label>
+                      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleEventPhotoUpload(idx, e.target.files[0])}
+                          style={{ padding: '0.5rem', background: 'var(--bg-secondary)', borderRadius: '8px' }}
+                        />
+                        <input
+                          type="text"
+                          className="form-input"
+                          value={ev.image || ''}
+                          onChange={(e) => handleEventEdit(idx, 'image', e.target.value)}
+                          placeholder="or paste image URL / Data URI..."
+                          style={{ flex: 1 }}
+                        />
+                      </div>
+                      {ev.image && (
+                        <div style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                          <img src={ev.image} alt={ev.title} style={{ height: '70px', borderRadius: '8px', objectFit: 'cover' }} />
+                          <span style={{ fontSize: '0.8rem', color: '#4ade80' }}>✓ Photo Attached</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+
+                <button onClick={saveEventsCMS} className="submit-btn" disabled={savingProfile} style={{ width: '100%', marginTop: '1rem', background: '#22c55e' }}>
+                  <i className="fa-solid fa-floppy-disk"></i>
+                  <span>{savingProfile ? 'Saving Changes...' : 'Save All Events Live to MongoDB'}</span>
+                </button>
+              </div>
+            )}
+
+            {/* TAB 4: BLOG ENGINE & VIEW ANALYTICS + CATEGORIES & RICH TEXT TOOLBAR */}
             {activeTab === 'blogs' && (
               <div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
@@ -1050,7 +1315,7 @@ export default function AdminDashboardPage() {
               </div>
             )}
 
-            {/* TAB 4: CLIENT PROPOSALS */}
+            {/* TAB 5: CLIENT PROPOSALS */}
             {activeTab === 'inquiries' && (
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
