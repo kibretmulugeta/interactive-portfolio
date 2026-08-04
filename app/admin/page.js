@@ -22,7 +22,7 @@ export default function AdminDashboardPage() {
   // Blogs & Analytics State
   const [blogs, setBlogs] = useState([]);
   const [loadingBlogs, setLoadingBlogs] = useState(true);
-  const [newBlog, setNewBlog] = useState({ title: '', excerpt: '', content: '', readTime: '5 min read' });
+  const [newBlog, setNewBlog] = useState({ title: '', category: 'scientific', excerpt: '', content: '', readTime: '5 min read' });
   const [editingBlog, setEditingBlog] = useState(null); // Currently selected blog for editing
   const [publishingBlog, setPublishingBlog] = useState(false);
   const [blogMessage, setBlogMessage] = useState(null);
@@ -234,7 +234,7 @@ export default function AdminDashboardPage() {
       if (!res.ok) throw new Error(result.error || 'Failed to publish blog post.');
 
       setBlogMessage({ type: 'success', text: 'Blog post published successfully!' });
-      setNewBlog({ title: '', excerpt: '', content: '', readTime: '5 min read' });
+      setNewBlog({ title: '', category: 'scientific', excerpt: '', content: '', readTime: '5 min read' });
       fetchBlogs();
     } catch (err) {
       setBlogMessage({ type: 'error', text: err.message });
@@ -255,6 +255,7 @@ export default function AdminDashboardPage() {
         body: JSON.stringify({
           id: editingBlog._id,
           title: editingBlog.title,
+          category: editingBlog.category,
           excerpt: editingBlog.excerpt,
           content: editingBlog.content,
           readTime: editingBlog.readTime,
@@ -725,7 +726,7 @@ export default function AdminDashboardPage() {
               </div>
             )}
 
-            {/* TAB 3: BLOG ENGINE & VIEW ANALYTICS + RICH TEXT TOOLBAR */}
+            {/* TAB 3: BLOG ENGINE & VIEW ANALYTICS + CATEGORIES & RICH TEXT TOOLBAR */}
             {activeTab === 'blogs' && (
               <div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
@@ -742,7 +743,7 @@ export default function AdminDashboardPage() {
                   </div>
                 </div>
 
-                {/* Edit Article Modal / Form when editingBlog is active */}
+                {/* Edit Article Form when editingBlog is active */}
                 {editingBlog ? (
                   <div className="card" style={{ padding: '2.5rem', marginBottom: '2.5rem', border: '1px solid var(--accent-color)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
@@ -763,6 +764,20 @@ export default function AdminDashboardPage() {
                           />
                         </div>
                         <div className="form-group">
+                          <label>Article Category</label>
+                          <select
+                            className="form-input"
+                            value={editingBlog.category || 'scientific'}
+                            onChange={(e) => setEditingBlog({ ...editingBlog, category: e.target.value })}
+                          >
+                            <option value="scientific">🔬 Scientific & Research</option>
+                            <option value="aesthetic">🎨 Aesthetic & Creative Design</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="form-grid" style={{ marginTop: '1rem' }}>
+                        <div className="form-group">
                           <label>Read Time</label>
                           <input
                             type="text"
@@ -771,17 +786,16 @@ export default function AdminDashboardPage() {
                             onChange={(e) => setEditingBlog({ ...editingBlog, readTime: e.target.value })}
                           />
                         </div>
-                      </div>
-
-                      <div className="form-group" style={{ marginTop: '1rem' }}>
-                        <label>Short Excerpt / Teaser</label>
-                        <input
-                          type="text"
-                          className="form-input"
-                          value={editingBlog.excerpt}
-                          onChange={(e) => setEditingBlog({ ...editingBlog, excerpt: e.target.value })}
-                          required
-                        />
+                        <div className="form-group">
+                          <label>Short Excerpt / Teaser</label>
+                          <input
+                            type="text"
+                            className="form-input"
+                            value={editingBlog.excerpt}
+                            onChange={(e) => setEditingBlog({ ...editingBlog, excerpt: e.target.value })}
+                            required
+                          />
+                        </div>
                       </div>
 
                       <div className="form-group" style={{ marginTop: '1rem' }}>
@@ -815,7 +829,7 @@ export default function AdminDashboardPage() {
                 ) : (
                   /* Write New Article Form */
                   <div className="card" style={{ padding: '2.5rem', marginBottom: '2.5rem' }}>
-                    <h3 style={{ fontSize: '1.4rem', marginBottom: '1.5rem' }}>Publish New Technical Article</h3>
+                    <h3 style={{ fontSize: '1.4rem', marginBottom: '1.5rem' }}>Publish New Technical / Aesthetic Article</h3>
 
                     {blogMessage && (
                       <div style={{ padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', background: blogMessage.type === 'success' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)', color: blogMessage.type === 'success' ? '#4ade80' : '#f87171' }}>
@@ -838,6 +852,21 @@ export default function AdminDashboardPage() {
                           />
                         </div>
                         <div className="form-group">
+                          <label htmlFor="blogCategory">Category</label>
+                          <select
+                            id="blogCategory"
+                            className="form-input"
+                            value={newBlog.category}
+                            onChange={(e) => setNewBlog({ ...newBlog, category: e.target.value })}
+                          >
+                            <option value="scientific">🔬 Scientific & Research</option>
+                            <option value="aesthetic">🎨 Aesthetic & Creative Design</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="form-grid" style={{ marginTop: '1rem' }}>
+                        <div className="form-group">
                           <label htmlFor="readTime">Estimated Read Time</label>
                           <input
                             type="text"
@@ -847,19 +876,18 @@ export default function AdminDashboardPage() {
                             onChange={(e) => setNewBlog({ ...newBlog, readTime: e.target.value })}
                           />
                         </div>
-                      </div>
-
-                      <div className="form-group" style={{ marginTop: '1rem' }}>
-                        <label htmlFor="excerpt">Short Excerpt / Teaser</label>
-                        <input
-                          type="text"
-                          id="excerpt"
-                          className="form-input"
-                          placeholder="Brief summary displayed on portfolio grid..."
-                          value={newBlog.excerpt}
-                          onChange={(e) => setNewBlog({ ...newBlog, excerpt: e.target.value })}
-                          required
-                        />
+                        <div className="form-group">
+                          <label htmlFor="excerpt">Short Excerpt / Teaser</label>
+                          <input
+                            type="text"
+                            id="excerpt"
+                            className="form-input"
+                            placeholder="Brief summary displayed on portfolio grid..."
+                            value={newBlog.excerpt}
+                            onChange={(e) => setNewBlog({ ...newBlog, excerpt: e.target.value })}
+                            required
+                          />
+                        </div>
                       </div>
 
                       <div className="form-group" style={{ marginTop: '1rem' }}>
@@ -879,7 +907,7 @@ export default function AdminDashboardPage() {
                           id="blogContent"
                           className="form-textarea"
                           rows={8}
-                          placeholder="Write your research article content here..."
+                          placeholder="Write your research or aesthetic article content here..."
                           value={newBlog.content}
                           onChange={(e) => setNewBlog({ ...newBlog, content: e.target.value })}
                           required
@@ -905,6 +933,7 @@ export default function AdminDashboardPage() {
                       <thead>
                         <tr>
                           <th>Title</th>
+                          <th>Category</th>
                           <th>Read Time</th>
                           <th>Views Count</th>
                           <th>Published Date</th>
@@ -918,6 +947,11 @@ export default function AdminDashboardPage() {
                               <strong>{post.title}</strong>
                               <br />
                               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>/{post.slug}</span>
+                            </td>
+                            <td>
+                              <span className="pill-badge" style={{ fontSize: '0.75rem', background: post.category === 'aesthetic' ? 'rgba(236, 72, 153, 0.2)' : 'rgba(99, 102, 241, 0.2)', color: post.category === 'aesthetic' ? '#f472b6' : '#a5b4fc' }}>
+                                {post.category === 'aesthetic' ? '🎨 Aesthetic' : '🔬 Scientific'}
+                              </span>
                             </td>
                             <td>{post.readTime}</td>
                             <td>

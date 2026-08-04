@@ -7,6 +7,7 @@ import Navbar from '@/components/Navbar';
 export default function Home() {
   const [profile, setProfile] = useState(null);
   const [blogs, setBlogs] = useState([]);
+  const [activeCategory, setActiveCategory] = useState('all'); // 'all', 'scientific', 'aesthetic'
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,21 +35,23 @@ export default function Home() {
 
   const hero = profile?.hero || {
     name: 'Kibret Mulugeta',
-    title: 'AI Engineer | Medical Imaging Researcher',
-    bio: 'Passionate about designing cutting-edge deep learning solutions for complex healthcare challenges. Specialized in U-Net brain MRI segmentation and reward-driven neural plasticity-inspired optimization algorithms to enhance diagnostic precision and algorithmic learning efficiency.',
+    title: 'AI ENGINEER | MACHINE LEARNING ENGINEER | FULL-STACK DEVELOPER',
+    bio: 'AI Engineer, Machine Learning Engineer, Full-Stack Developer, and Systems Engineer with an MSc in Computer Engineering specializing in Artificial Intelligence and Data Engineering. Experienced in designing intelligent systems, developing deep learning models, building full-stack web applications, and deploying scalable software solutions.',
     photoUrl: '/assets/images/kibret_photo.jpg',
-    resumeUrl: '/assets/Kibret_Mulugeta_Resume.pdf',
+    resumeUrl: '/api/resume/download',
     badgeText: 'Available for Research & Contracting',
-    githubUrl: 'https://github.com',
-    linkedinUrl: 'https://linkedin.com',
+    githubUrl: 'https://github.com/kibretmulugeta',
+    linkedinUrl: 'https://linkedin.com/in/kibret-mulugeta',
     scholarUrl: 'https://scholar.google.com',
     twitterUrl: 'https://twitter.com',
-    email: 'kibret.mulugeta@example.com',
+    email: 'kibretmail@gmail.com',
   };
 
   const projects = profile?.projects || [];
   const events = profile?.events || [];
   const experience = profile?.experience || [];
+
+  const filteredBlogs = activeCategory === 'all' ? blogs : blogs.filter(b => b.category === activeCategory);
 
   return (
     <>
@@ -83,8 +86,6 @@ export default function Home() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
                     <a
                       href={hero.resumeUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
                       className="pill-btn outlined-btn"
                       style={{ background: 'var(--accent-color)', color: '#ffffff', borderColor: 'transparent' }}
                     >
@@ -123,21 +124,58 @@ export default function Home() {
           <div className="connector-line"></div>
         </div>
 
-        {/* Blog & Insights Section */}
+        {/* Categorized Blog & Insights Section */}
         <section className="section creativity-section" id="creativity">
           <div className="container">
             <div className="section-header">
-              <h2 className="section-title">Technical Blogs & Insights</h2>
-              <p className="section-subtitle">Articles covering U-Net medical segmentation, neural plasticity principles, and modern PyTorch engineering practices.</p>
+              <h2 className="section-title">Technical & Aesthetic Insights</h2>
+              <p className="section-subtitle">Articles divided into Scientific & Research papers and Aesthetic & Design reflections.</p>
+
+              {/* Category Filter Tabs */}
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => setActiveCategory('all')}
+                  className="pill-btn"
+                  style={{
+                    background: activeCategory === 'all' ? 'var(--accent-color)' : 'var(--bg-secondary)',
+                    color: '#fff',
+                    border: '1px solid var(--card-border)',
+                  }}
+                >
+                  All Articles ({blogs.length})
+                </button>
+                <button
+                  onClick={() => setActiveCategory('scientific')}
+                  className="pill-btn"
+                  style={{
+                    background: activeCategory === 'scientific' ? 'var(--accent-color)' : 'var(--bg-secondary)',
+                    color: '#fff',
+                    border: '1px solid var(--card-border)',
+                  }}
+                >
+                  🔬 Scientific & Research
+                </button>
+                <button
+                  onClick={() => setActiveCategory('aesthetic')}
+                  className="pill-btn"
+                  style={{
+                    background: activeCategory === 'aesthetic' ? 'var(--accent-color)' : 'var(--bg-secondary)',
+                    color: '#fff',
+                    border: '1px solid var(--card-border)',
+                  }}
+                >
+                  🎨 Aesthetic & Design
+                </button>
+              </div>
             </div>
 
             <div className="creativity-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.75rem' }}>
-              {blogs.map((b, idx) => (
+              {filteredBlogs.map((b, idx) => (
                 <div className="card creativity-card" key={idx} style={{ padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                   <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                      <span className="pill-badge">
-                        <span className="badge-text">{b.readTime}</span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                      <span className="pill-badge" style={{ background: b.category === 'aesthetic' ? 'rgba(236, 72, 153, 0.2)' : 'rgba(99, 102, 241, 0.2)', color: b.category === 'aesthetic' ? '#f472b6' : '#a5b4fc' }}>
+                        <span className="badge-text">{b.category === 'aesthetic' ? '🎨 Aesthetic' : '🔬 Scientific'}</span>
                       </span>
                       <span style={{ fontSize: '0.8rem', color: 'var(--accent-light)', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
                         <i className="fa-solid fa-eye"></i>
@@ -152,10 +190,13 @@ export default function Home() {
                     </p>
                   </div>
 
-                  <Link href={`/blog/${b.slug}`} className="pill-btn outlined-btn" style={{ marginTop: '1.5rem', alignSelf: 'flex-start' }}>
-                    <span>Read Article</span>
-                    <i className="fa-solid fa-arrow-right"></i>
-                  </Link>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem' }}>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{b.readTime}</span>
+                    <Link href={`/blog/${b.slug}`} className="pill-btn outlined-btn">
+                      <span>Read Article</span>
+                      <i className="fa-solid fa-arrow-right"></i>
+                    </Link>
+                  </div>
                 </div>
               ))}
             </div>

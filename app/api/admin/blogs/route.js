@@ -4,9 +4,6 @@ import connectToDatabase from '@/lib/mongodb';
 import BlogPost from '@/models/BlogPost';
 import { isAdmin } from '@/lib/auth';
 
-/**
- * Helper function to create URL slug from title
- */
 function createSlug(title) {
   return title
     .toLowerCase()
@@ -16,10 +13,6 @@ function createSlug(title) {
     .replace(/^-+|-+$/g, '');
 }
 
-/**
- * POST /api/admin/blogs
- * Create new blog post. Protected by Auth0 session + Admin RBAC.
- */
 export async function POST(req) {
   try {
     const res = new NextResponse();
@@ -29,7 +22,7 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Forbidden. Admin access required.' }, { status: 403 });
     }
 
-    const { title, excerpt, content, readTime } = await req.json();
+    const { title, category, excerpt, content, readTime } = await req.json();
 
     if (!title || !content) {
       return NextResponse.json({ error: 'Title and content are required.' }, { status: 400 });
@@ -41,6 +34,7 @@ export async function POST(req) {
     const newPost = await BlogPost.create({
       title,
       slug,
+      category: category || 'scientific',
       excerpt: excerpt || title,
       content,
       readTime: readTime || '5 min read',
@@ -55,10 +49,6 @@ export async function POST(req) {
   }
 }
 
-/**
- * PUT /api/admin/blogs
- * Edit an existing blog post.
- */
 export async function PUT(req) {
   try {
     const res = new NextResponse();
@@ -68,7 +58,7 @@ export async function PUT(req) {
       return NextResponse.json({ error: 'Forbidden. Admin access required.' }, { status: 403 });
     }
 
-    const { id, title, excerpt, content, readTime } = await req.json();
+    const { id, title, category, excerpt, content, readTime } = await req.json();
 
     if (!id || !title || !content) {
       return NextResponse.json({ error: 'ID, title, and content are required.' }, { status: 400 });
@@ -79,6 +69,7 @@ export async function PUT(req) {
       id,
       {
         title,
+        category: category || 'scientific',
         excerpt,
         content,
         readTime,
@@ -93,10 +84,6 @@ export async function PUT(req) {
   }
 }
 
-/**
- * DELETE /api/admin/blogs
- * Delete a blog post by id.
- */
 export async function DELETE(req) {
   try {
     const res = new NextResponse();

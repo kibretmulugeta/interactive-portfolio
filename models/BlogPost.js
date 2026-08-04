@@ -14,6 +14,11 @@ const BlogPostSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
+    category: {
+      type: String,
+      enum: ['scientific', 'aesthetic'],
+      default: 'scientific',
+    },
     excerpt: {
       type: String,
       required: [true, 'Please provide short excerpt.'],

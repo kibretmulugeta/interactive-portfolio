@@ -2,10 +2,13 @@ import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import BlogPost from '@/models/BlogPost';
 
+export const dynamic = 'force-dynamic';
+
 export const defaultBlogs = [
   {
     title: 'Reward-Driven Neural Plasticity-Inspired Optimization for Enhancing U-Net Medical Image Segmentation',
     slug: 'reward-driven-neural-plasticity-unet-segmentation',
+    category: 'scientific',
     excerpt: 'A novel biologically-inspired hyperparameter optimization framework for U-Net brain MRI segmentation achieving 99.72% accuracy and 18.32% faster convergence.',
     content: `
 This thesis presents a novel biologically-inspired hyperparameter optimization framework for U-Net-based medical image segmentation. Focusing on brain MRI analysis, we address the critical challenge of suboptimal segmentation performance in conventional U-Net architectures, which often suffer from poor convergence (84.32% training accuracy) due to ineffective parameter tuning.
@@ -36,8 +39,27 @@ The results highlight the model's potential to overcome local optima traps and p
     views: 245,
   },
   {
+    title: 'The Aesthetic Harmony of Biological Intelligence and Modern Digital UI',
+    slug: 'aesthetic-harmony-biological-intelligence-ui',
+    category: 'aesthetic',
+    excerpt: 'Exploring how organic neural structures, dark mode glassmorphism, and fluid visual ergonomics shape state-of-the-art interactive applications.',
+    content: `
+Software development is as much an art form as it is a mathematical science. When engineering complex artificial intelligence systems, visual ergonomics and aesthetic harmony play a decisive role in human-computer interaction.
+
+### 1. The Art of Digital Glassmorphism & Visual Balance
+Modern visual aesthetics favor deep dark backgrounds paired with vibrant glowing accents. By incorporating subtle micro-animations and translucent glass cards, interfaces transform from static information displays into fluid digital environments.
+
+### 2. Biological Geometry & Systems Elegance
+Nature optimizes through computational elegance. From the branching structures of dendritic networks to the golden ratio in anatomical designs, translating biological principles into user interfaces creates intuitive software that feels alive and responsive.
+    `,
+    author: 'Kibret Mulugeta',
+    readTime: '5 min read',
+    views: 118,
+  },
+  {
     title: 'Optimizing U-Net Architectures for High-Resolution Brain MRI Segmentation',
     slug: 'optimizing-unet-brain-mri-segmentation',
+    category: 'scientific',
     excerpt: 'Exploring neural plasticity-inspired loss functions and MONAI PyTorch optimizations for precise clinical MRI tissue segmentation.',
     content: `
 Medical imaging diagnostics require exceptional precision, particularly when segmenting complex neurological tissues from brain Magnetic Resonance Imaging (MRI) scans. In this article, we dive into advanced U-Net architectural enhancements that accelerate training convergence while elevating Dice similarity metrics.
@@ -47,21 +69,6 @@ High-resolution 3D DICOM scans exhibit subtle intensity variations between white
 
 ### 2. Biological Neural Plasticity & Loss Weighting
 By drawing inspiration from synaptic reinforcement mechanisms, we formulate adaptive loss weight updates during backpropagation. Synaptic weights associated with under-segmented edge voxels receive dynamic reinforcement, decreasing convergence times by up to 35%.
-
-\`\`\`python
-import torch
-import torch.nn as nn
-
-class PlasticityWeightedLoss(nn.Module):
-    def __init__(self, alpha=0.5):
-        super().__init__()
-        self.alpha = alpha
-
-    def forward(self, pred, target):
-        dice_loss = 1.0 - (2.0 * (pred * target).sum() + 1e-5) / (pred.sum() + target.sum() + 1e-5)
-        edge_weight = torch.abs(pred - target)
-        return dice_loss + self.alpha * edge_weight.mean()
-\`\`\`
     `,
     author: 'Kibret Mulugeta',
     readTime: '6 min read',
@@ -69,12 +76,20 @@ class PlasticityWeightedLoss(nn.Module):
   },
 ];
 
-export async function GET() {
+export async function GET(req) {
   try {
-    await connectToDatabase();
-    let blogs = await BlogPost.find({}).sort({ createdAt: -1 });
+    const { searchParams } = new URL(req.url);
+    const category = searchParams.get('category');
 
-    if (blogs.length === 0) {
+    await connectToDatabase();
+    let query = {};
+    if (category && ['scientific', 'aesthetic'].includes(category)) {
+      query.category = category;
+    }
+
+    let blogs = await BlogPost.find(query).sort({ createdAt: -1 });
+
+    if (blogs.length === 0 && !category) {
       blogs = await BlogPost.insertMany(defaultBlogs);
     }
 

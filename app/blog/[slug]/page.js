@@ -58,6 +58,8 @@ export default function BlogPostPage({ params }) {
     );
   }
 
+  const categoryBadge = post.category === 'aesthetic' ? '🎨 Aesthetic & Design' : '🔬 Scientific & Research';
+
   return (
     <>
       <Navbar />
@@ -70,6 +72,9 @@ export default function BlogPostPage({ params }) {
 
             <header style={{ marginBottom: '2.5rem' }}>
               <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap' }}>
+                <span className="pill-badge" style={{ background: post.category === 'aesthetic' ? 'rgba(236, 72, 153, 0.2)' : 'rgba(99, 102, 241, 0.2)', color: post.category === 'aesthetic' ? '#f472b6' : '#a5b4fc' }}>
+                  <span className="badge-text">{categoryBadge}</span>
+                </span>
                 <span className="pill-badge">
                   <span className="badge-text">{post.readTime}</span>
                 </span>
@@ -92,7 +97,7 @@ export default function BlogPostPage({ params }) {
                 <img src="/assets/images/kibret_photo.jpg" alt={post.author} style={{ width: '42px', height: '42px', borderRadius: '50%', objectFit: 'cover' }} />
                 <div>
                   <strong style={{ display: 'block', fontSize: '0.95rem' }}>{post.author}</strong>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>AI Engineer & Medical Imaging Researcher</span>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>AI Engineer & Systems Researcher</span>
                 </div>
               </div>
             </header>
