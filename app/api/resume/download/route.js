@@ -13,7 +13,7 @@ export async function GET(req) {
     const ip = forwarded ? forwarded.split(',')[0] : 'Visitor';
 
     // Atomically increment resumeDownloads count and append log entry
-    await ProfileConfig.findOneAndUpdate(
+    const config = await ProfileConfig.findOneAndUpdate(
       {},
       {
         $inc: { resumeDownloads: 1 },
@@ -27,12 +27,25 @@ export async function GET(req) {
       { upsert: true, new: true }
     );
 
-    // Redirect client to actual resume PDF file
+    // Stream PDF directly from MongoDB Base64 data if present
+    if (config && config.resumeDataUri) {
+      const base64Data = config.resumeDataUri.replace(/^data:application\/pdf;base64,/, '');
+      const pdfBuffer = Buffer.from(base64Data, 'base64');
+
+      return new NextResponse(pdfBuffer, {
+        headers: {
+          'Content-Type': 'application/pdf',
+          'Content-Disposition': 'inline; filename="Kibret_Mulugeta_Resume.pdf"',
+          'Cache-Control': 'no-cache',
+        },
+      });
+    }
+
+    // Fallback redirect to static asset file
     const resumePdfUrl = new URL('/assets/Kibret_Mulugeta_Resume.pdf', req.url);
     return NextResponse.redirect(resumePdfUrl);
   } catch (error) {
     console.error('API Error /api/resume/download:', error);
-    // Fallback redirect even if database connection error occurs
     const resumePdfUrl = new URL('/assets/Kibret_Mulugeta_Resume.pdf', req.url);
     return NextResponse.redirect(resumePdfUrl);
   }

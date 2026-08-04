@@ -19,6 +19,9 @@ const ProfileConfigSchema = new mongoose.Schema(
       twitterUrl: { type: String, default: 'https://twitter.com' },
       email: { type: String, default: 'kibretmail@gmail.com' },
     },
+    resumeDataUri: {
+      type: String, // Base64 PDF storage for Vercel serverless persistence
+    },
     resumeDownloads: {
       type: Number,
       default: 0,

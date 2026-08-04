@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@auth0/nextjs-auth0';
-import { writeFile } from 'fs/promises';
-import path from 'path';
 import connectToDatabase from '@/lib/mongodb';
 import ProfileConfig from '@/models/ProfileConfig';
 import { isAdmin } from '@/lib/auth';
@@ -26,24 +24,27 @@ export async function POST(req) {
       return NextResponse.json({ error: 'File must be in PDF format (.pdf).' }, { status: 400 });
     }
 
+    // Convert PDF file arrayBuffer to Base64 Data URI for serverless database persistence
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-
-    // Save PDF file to public/assets/Kibret_Mulugeta_Resume.pdf
-    const filePath = path.join(process.cwd(), 'public', 'assets', 'Kibret_Mulugeta_Resume.pdf');
-    await writeFile(filePath, buffer);
+    const base64Pdf = `data:application/pdf;base64,${buffer.toString('base64')}`;
 
     await connectToDatabase();
     await ProfileConfig.findOneAndUpdate(
       {},
-      { $set: { 'hero.resumeUrl': '/api/resume/download' } },
+      {
+        $set: {
+          resumeDataUri: base64Pdf,
+          'hero.resumeUrl': '/api/resume/download',
+        },
+      },
       { upsert: true }
     );
 
     return NextResponse.json({
       success: true,
-      message: 'PDF Resume uploaded and updated successfully!',
-      url: '/assets/Kibret_Mulugeta_Resume.pdf',
+      message: 'PDF Resume uploaded and stored in MongoDB successfully!',
+      url: '/api/resume/download',
     });
   } catch (error) {
     console.error('Error uploading PDF resume:', error);
