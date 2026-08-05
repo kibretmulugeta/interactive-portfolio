@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Navbar from '@/components/Navbar';
+import { isAdmin } from '@/lib/auth';
 
 export default function AdminDashboardPage() {
   const { user, isLoading } = useUser();
@@ -43,7 +44,7 @@ export default function AdminDashboardPage() {
   const [inquiriesError, setInquiriesError] = useState(null);
 
   useEffect(() => {
-    if (user) {
+    if (user && isAdmin(user)) {
       fetchProfileCMS();
       fetchBlogs();
       fetchInquiries();
@@ -453,7 +454,7 @@ export default function AdminDashboardPage() {
     );
   }
 
-  if (inquiriesError && (inquiriesError.includes('Forbidden') || inquiriesError.includes('403'))) {
+  if (!isAdmin(user) || (inquiriesError && (inquiriesError.includes('Forbidden') || inquiriesError.includes('403')))) {
     return (
       <>
         <Navbar />

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useUser } from '@auth0/nextjs-auth0/client';
+import { isAdmin } from '@/lib/auth';
 
 export default function Navbar() {
   const { user, isLoading } = useUser();
@@ -47,7 +48,7 @@ export default function Navbar() {
             <li><Link href="/#experience" className="nav-link">Experience</Link></li>
             <li><Link href="/contracting" className="nav-link" style={{ color: 'var(--accent-light)', fontWeight: 600 }}>Client Portal</Link></li>
             
-            {user && (
+            {!isLoading && user && isAdmin(user) && (
               <li>
                 <Link href="/admin" className="nav-link" style={{ color: '#facc15', fontWeight: 600 }}>
                   Admin
