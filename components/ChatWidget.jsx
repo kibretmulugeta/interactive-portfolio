@@ -20,7 +20,7 @@ export default function ChatWidget() {
       if (window.WebsiteAssistant) {
         window.WebsiteAssistant.init({
           apiKey: 'demo-api-key-12345',
-          apiEndpoint: 'https://personal-ai-assistant-alpha-eight.vercel.app/api/v1',
+          apiEndpoint: 'https://personal-ai-assistant-r1zt.onrender.com/api/v1',
           theme: 'dark',
           position: 'bottom-right',
           primaryColor: '#6366f1',
