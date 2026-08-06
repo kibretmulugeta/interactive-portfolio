@@ -1,5 +1,6 @@
 import './globals.css';
 import { Providers } from './providers';
+import ChatWidget from '@/components/ChatWidget';
 
 export const metadata = {
   title: 'Kibret Mulugeta | AI Engineer & Medical Imaging Researcher',
@@ -25,6 +26,7 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <Providers>{children}</Providers>
+        <ChatWidget />
       </body>
     </html>
   );
