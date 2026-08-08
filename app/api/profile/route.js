@@ -74,15 +74,15 @@ export const defaultProfileData = {
   events: [
     {
       date: 'Oct 2025',
-      title: 'AI & Medical Imaging Keynote',
-      text: 'Presenting U-Net brain MRI segmentation breakthroughs at the Global HealthTech Summit.',
-      image: '/assets/images/event_1.png',
+      title: 'Neural Plasticity & U-Net Keynote',
+      text: 'Presenting "Neural Plasticity Inspired Optimization for Enhancing U-Net Progress Presentation" on U-Net Brain MRI Segmentation at the Global HealthTech Summit.',
+      image: '/assets/images/event_presentation.jpg',
     },
     {
       date: 'Aug 2025',
       title: 'Deep Learning & Plasticity Podcast',
       text: 'Discussing biological plasticity-inspired loss functions in medical neural networks.',
-      image: '/assets/images/event_2.png',
+      image: '/assets/images/event_presentation.jpg',
     },
     {
       date: 'Jun 2025',

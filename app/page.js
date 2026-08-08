@@ -138,7 +138,7 @@ export default function Home() {
                   className="pill-btn"
                   style={{
                     background: activeCategory === 'all' ? 'var(--accent-color)' : 'var(--bg-secondary)',
-                    color: '#fff',
+                    color: activeCategory === 'all' ? '#ffffff' : 'var(--text-primary)',
                     border: '1px solid var(--card-border)',
                   }}
                 >
@@ -149,7 +149,7 @@ export default function Home() {
                   className="pill-btn"
                   style={{
                     background: activeCategory === 'scientific' ? 'var(--accent-color)' : 'var(--bg-secondary)',
-                    color: '#fff',
+                    color: activeCategory === 'scientific' ? '#ffffff' : 'var(--text-primary)',
                     border: '1px solid var(--card-border)',
                   }}
                 >
@@ -160,7 +160,7 @@ export default function Home() {
                   className="pill-btn"
                   style={{
                     background: activeCategory === 'aesthetic' ? 'var(--accent-color)' : 'var(--bg-secondary)',
-                    color: '#fff',
+                    color: activeCategory === 'aesthetic' ? '#ffffff' : 'var(--text-primary)',
                     border: '1px solid var(--card-border)',
                   }}
                 >
@@ -174,7 +174,7 @@ export default function Home() {
                 <div className="card creativity-card" key={idx} style={{ padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                   <div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                      <span className="pill-badge" style={{ background: b.category === 'aesthetic' ? 'rgba(236, 72, 153, 0.2)' : 'rgba(99, 102, 241, 0.2)', color: b.category === 'aesthetic' ? '#f472b6' : '#a5b4fc' }}>
+                      <span className="pill-badge" style={{ background: 'var(--badge-bg)', border: '1px solid var(--badge-border)' }}>
                         <span className="badge-text">{b.category === 'aesthetic' ? '🎨 Aesthetic' : '🔬 Scientific'}</span>
                       </span>
                       <span style={{ fontSize: '0.8rem', color: 'var(--accent-light)', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>

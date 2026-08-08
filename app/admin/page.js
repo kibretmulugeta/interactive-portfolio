@@ -505,7 +505,7 @@ export default function AdminDashboardPage() {
                   className="pill-btn"
                   style={{
                     background: activeTab === 'profile' ? 'var(--accent-color)' : 'var(--bg-secondary)',
-                    color: '#fff',
+                    color: activeTab === 'profile' ? '#ffffff' : 'var(--text-primary)',
                     border: '1px solid var(--card-border)',
                   }}
                 >
@@ -518,7 +518,7 @@ export default function AdminDashboardPage() {
                   className="pill-btn"
                   style={{
                     background: activeTab === 'projects' ? 'var(--accent-color)' : 'var(--bg-secondary)',
-                    color: '#fff',
+                    color: activeTab === 'projects' ? '#ffffff' : 'var(--text-primary)',
                     border: '1px solid var(--card-border)',
                   }}
                 >
@@ -531,7 +531,7 @@ export default function AdminDashboardPage() {
                   className="pill-btn"
                   style={{
                     background: activeTab === 'events' ? 'var(--accent-color)' : 'var(--bg-secondary)',
-                    color: '#fff',
+                    color: activeTab === 'events' ? '#ffffff' : 'var(--text-primary)',
                     border: '1px solid var(--card-border)',
                   }}
                 >
@@ -544,7 +544,7 @@ export default function AdminDashboardPage() {
                   className="pill-btn"
                   style={{
                     background: activeTab === 'blogs' ? 'var(--accent-color)' : 'var(--bg-secondary)',
-                    color: '#fff',
+                    color: activeTab === 'blogs' ? '#ffffff' : 'var(--text-primary)',
                     border: '1px solid var(--card-border)',
                   }}
                 >
@@ -557,7 +557,7 @@ export default function AdminDashboardPage() {
                   className="pill-btn"
                   style={{
                     background: activeTab === 'inquiries' ? 'var(--accent-color)' : 'var(--bg-secondary)',
-                    color: '#fff',
+                    color: activeTab === 'inquiries' ? '#ffffff' : 'var(--text-primary)',
                     border: '1px solid var(--card-border)',
                   }}
                 >

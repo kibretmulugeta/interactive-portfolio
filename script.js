@@ -1,12 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
   /* ==========================================================================
-     1. THEME SWITCHER (DARK MODE BY DEFAULT)
+     1. THEME SWITCHER (LIGHT MODE BY DEFAULT)
      ========================================================================== */
   const themeToggleBtn = document.getElementById('themeToggleBtn');
   const htmlElement = document.documentElement;
 
-  // Retrieve saved theme or default to dark
-  const savedTheme = localStorage.getItem('km_portfolio_theme') || 'dark';
+  // Retrieve saved theme or default to light
+  const savedTheme = localStorage.getItem('km_portfolio_theme') || 'light';
   htmlElement.setAttribute('data-theme', savedTheme);
 
   if (themeToggleBtn) {

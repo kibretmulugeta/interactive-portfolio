@@ -1,8 +1,46 @@
 /* ==========================================================================
    GLOBAL DESIGN SYSTEM & VARIABLES
    ========================================================================== */
-:root {
-  /* Color Palette - Dark Mode (Default) */
+:root,
+[data-theme="light"] {
+  /* Color Palette - Light Mode (Default) */
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --card-bg: #ffffff;
+  --card-bg-hover: #f1f5f9;
+  --card-border: rgba(0, 0, 0, 0.08);
+  --card-border-hover: rgba(0, 0, 0, 0.18);
+  
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  
+  --accent-color: #4f46e5;
+  --accent-light: #6366f1;
+  --accent-glow: rgba(79, 70, 229, 0.15);
+  --accent-cyan: #0891b2;
+  
+  --badge-bg: rgba(79, 70, 229, 0.08);
+  --badge-border: rgba(79, 70, 229, 0.22);
+  --badge-text: #4338ca;
+  
+  --connector-color: rgba(0, 0, 0, 0.15);
+  --nav-bg: rgba(248, 250, 252, 0.88);
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.08);
+  --shadow-glow: 0 0 25px rgba(79, 70, 229, 0.1);
+
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: 'Plus Jakarta Sans', 'Inter', sans-serif;
+
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --border-radius: 16px;
+  --border-radius-sm: 10px;
+}
+
+/* Dark Theme Overrides */
+[data-theme="dark"] {
   --bg-primary: #0a0a0c;
   --bg-secondary: #121215;
   --card-bg: #141417;
@@ -24,47 +62,10 @@
   --badge-text: #a5b4fc;
   
   --connector-color: rgba(255, 255, 255, 0.18);
-  
   --nav-bg: rgba(10, 10, 12, 0.85);
   --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.5);
   --shadow-glow: 0 0 25px rgba(99, 102, 241, 0.15);
-
-  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-heading: 'Plus Jakarta Sans', 'Inter', sans-serif;
-
-  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --border-radius: 16px;
-  --border-radius-sm: 10px;
-}
-
-/* Light Theme Overrides */
-[data-theme="light"] {
-  --bg-primary: #f8fafc;
-  --bg-secondary: #ffffff;
-  --card-bg: #ffffff;
-  --card-bg-hover: #f1f5f9;
-  --card-border: rgba(0, 0, 0, 0.08);
-  --card-border-hover: rgba(0, 0, 0, 0.18);
-  
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
-  
-  --accent-color: #4f46e5;
-  --accent-light: #6366f1;
-  --accent-glow: rgba(79, 70, 229, 0.15);
-  
-  --badge-bg: rgba(79, 70, 229, 0.08);
-  --badge-border: rgba(79, 70, 229, 0.22);
-  --badge-text: #4338ca;
-  
-  --connector-color: rgba(0, 0, 0, 0.15);
-  --nav-bg: rgba(248, 250, 252, 0.88);
-  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.08);
-  --shadow-glow: 0 0 25px rgba(79, 70, 229, 0.1);
 }
 
 /* Base Resets */

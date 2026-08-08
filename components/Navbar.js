@@ -7,11 +7,11 @@ import { isAdmin } from '@/lib/auth';
 
 export default function Navbar() {
   const { user, isLoading } = useUser();
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState('light');
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('km_portfolio_theme') || 'dark';
+    const savedTheme = localStorage.getItem('km_portfolio_theme') || 'light';
     setTheme(savedTheme);
     document.documentElement.setAttribute('data-theme', savedTheme);
   }, []);

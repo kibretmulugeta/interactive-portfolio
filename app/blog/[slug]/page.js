@@ -72,7 +72,7 @@ export default function BlogPostPage({ params }) {
 
             <header style={{ marginBottom: '2.5rem' }}>
               <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap' }}>
-                <span className="pill-badge" style={{ background: post.category === 'aesthetic' ? 'rgba(236, 72, 153, 0.2)' : 'rgba(99, 102, 241, 0.2)', color: post.category === 'aesthetic' ? '#f472b6' : '#a5b4fc' }}>
+                <span className="pill-badge" style={{ background: 'var(--badge-bg)', border: '1px solid var(--badge-border)' }}>
                   <span className="badge-text">{categoryBadge}</span>
                 </span>
                 <span className="pill-badge">
