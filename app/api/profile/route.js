@@ -63,6 +63,14 @@ export const defaultProfileData = {
       githubUrl: 'https://github.com/kibretmulugeta',
     },
     {
+      title: 'Chat Platform',
+      description: 'AI Digital Twin — Multi-Agent Personal Assistant Platform',
+      image: '/assets/images/chat_platform.png',
+      tags: ['AI Digital Twin', 'Multi-Agent', 'Next.js', 'Python', 'LLM'],
+      liveUrl: 'https://personal-ai-assistant-six-phi.vercel.app/demo',
+      githubUrl: 'https://github.com/kibretmulugeta/personal-ai-assistant',
+    },
+    {
       title: 'Apartment Rental & Task Management Systems',
       description: 'Designed complete rental platform featuring property management, search workflows, calendar integration, reminder systems, and JWT authentication.',
       image: '/assets/images/event_4.png',
