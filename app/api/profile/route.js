@@ -52,7 +52,7 @@ export const defaultProfileData = {
       image: '/assets/images/event_3.png',
       tags: ['CNN', 'OpenCV', 'Computer Vision', 'Face Recognition'],
       liveUrl: '#',
-      githubUrl: 'https://github.com/kibretmulugeta',
+      githubUrl: 'https://github.com/kibretmulugeta/cctv-intelligent-analysis',
     },
     {
       title: 'OCR (Optical Character Recognition) System',
