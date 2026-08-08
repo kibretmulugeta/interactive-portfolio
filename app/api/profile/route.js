@@ -64,9 +64,9 @@ export const defaultProfileData = {
     },
     {
       title: 'Chat Platform',
-      description: 'AI Digital Twin — Multi-Agent Personal Assistant Platform',
+      description: 'AI Digital Twin — Multi-Agent Personal Assistant Platform. A full-stack AI-powered chat platform featuring Retrieval-Augmented Generation (RAG), multi-LLM model support (Gemini, Claude, GPT-4), PostgreSQL with pgvector for semantic search, and containerized microservice deployment via Docker. Built with FastAPI backend, React frontend, and a custom LLM abstraction layer.',
       image: '/assets/images/chat_platform.png',
-      tags: ['AI Digital Twin', 'Multi-Agent', 'Next.js', 'Python', 'LLM'],
+      tags: ['FastAPI', 'React', 'PostgreSQL', 'pgvector', 'Docker', 'RAG', 'Gemini', 'Claude', 'GPT-4', 'Python'],
       liveUrl: 'https://personal-ai-assistant-six-phi.vercel.app/demo',
       githubUrl: 'https://github.com/kibretmulugeta/personal-ai-assistant',
     },
