@@ -28,32 +28,39 @@ async function run() {
     const config = await ProfileConfig.findOne({});
     if (!config) { console.error('No config found.'); process.exit(1); }
 
-    const projects = config.toObject().projects || [];
+    let projects = config.toObject().projects || [];
 
-    const targetUrl = 'https://github.com/kibretmulugeta/cctv-intelligent-analysis';
+    // Find Chat Platform
+    const chatProject = projects.find(p => p.title && (p.title.toLowerCase().includes('chat') || p.title.toLowerCase().includes('digital twin')));
 
-    const updatedProjects = projects.map(p => {
-      if (p.title && p.title.toLowerCase().includes('cctv')) {
-        console.log(`Updating githubUrl for project [${p.title}]`);
-        return {
-          ...p,
-          githubUrl: targetUrl,
-        };
-      }
-      return p;
+    // Find CCTV Project
+    const cctvProject = projects.find(p => p.title && p.title.toLowerCase().includes('cctv'));
+
+    // Other projects
+    const otherProjects = projects.filter(p => {
+      if (!p.title) return false;
+      const t = p.title.toLowerCase();
+      if (t.includes('chat') || t.includes('digital twin') || t.includes('cctv')) return false;
+      return true;
     });
+
+    const orderedProjects = [];
+    if (chatProject) orderedProjects.push(chatProject);
+    if (cctvProject) orderedProjects.push(cctvProject);
+    orderedProjects.push(...otherProjects);
 
     const result = await ProfileConfig.updateOne(
       { _id: config._id },
-      { $set: { projects: updatedProjects } }
+      { $set: { projects: orderedProjects } }
     );
 
-    console.log(`Result: matched=${result.matchedCount}, modified=${result.modifiedCount}`);
+    console.log(`Reorder result: matched=${result.matchedCount}, modified=${result.modifiedCount}`);
 
     const verify = await ProfileConfig.findOne({});
-    const cctv = verify.projects.find(p => p.title && p.title.toLowerCase().includes('cctv'));
-    console.log('VERIFIED CCTV PROJECT:');
-    console.log(cctv);
+    console.log('\nNEW PROJECT ORDER:');
+    verify.projects.forEach((p, i) => {
+      console.log(`  [${i + 1}] ${p.title}`);
+    });
 
     process.exit(0);
   } catch (error) {

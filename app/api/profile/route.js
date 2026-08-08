@@ -23,6 +23,22 @@ export const defaultProfileData = {
   ],
   projects: [
     {
+      title: 'Chat Platform',
+      description: 'AI Digital Twin — Multi-Agent Personal Assistant Platform. A full-stack AI-powered chat platform featuring Retrieval-Augmented Generation (RAG), multi-LLM model support (Gemini, Claude, GPT-4), PostgreSQL with pgvector for semantic search, and containerized microservice deployment via Docker. Built with FastAPI backend, React frontend, and a custom LLM abstraction layer.',
+      image: '/assets/images/chat_platform.png',
+      tags: ['FastAPI', 'React', 'PostgreSQL', 'pgvector', 'Docker', 'RAG', 'Gemini', 'Claude', 'GPT-4', 'Python'],
+      liveUrl: 'https://personal-ai-assistant-six-phi.vercel.app/demo',
+      githubUrl: 'https://github.com/kibretmulugeta/personal-ai-assistant',
+    },
+    {
+      title: 'CCTV Intelligent Analysis & Face Recognition',
+      description: 'Designed real-time solutions for monitoring CCTV video streams with capabilities in object detection, activity analysis, and AI-based face recognition for identity verification.',
+      image: '/assets/images/event_3.png',
+      tags: ['CNN', 'OpenCV', 'Computer Vision', 'Face Recognition'],
+      liveUrl: '#',
+      githubUrl: 'https://github.com/kibretmulugeta/cctv-intelligent-analysis',
+    },
+    {
       title: 'Medical Image Analysis System',
       description: 'Developed deep learning models for medical image understanding and automated diagnosis support. Focused on Brain MRI analysis, medical image segmentation (U-Net, MONAI), and deep learning optimization.',
       image: '/assets/images/scholarxiv.png',
@@ -47,28 +63,12 @@ export const defaultProfileData = {
       githubUrl: 'https://github.com/kibretmulugeta',
     },
     {
-      title: 'CCTV Intelligent Analysis & Face Recognition',
-      description: 'Designed real-time solutions for monitoring CCTV video streams with capabilities in object detection, activity analysis, and AI-based face recognition for identity verification.',
-      image: '/assets/images/event_3.png',
-      tags: ['CNN', 'OpenCV', 'Computer Vision', 'Face Recognition'],
-      liveUrl: '#',
-      githubUrl: 'https://github.com/kibretmulugeta/cctv-intelligent-analysis',
-    },
-    {
       title: 'OCR (Optical Character Recognition) System',
       description: 'Built an intelligent OCR pipeline for extracting formatted text and structured data from complex images and scanned medical/technical documents.',
       image: '/assets/images/event_1.png',
       tags: ['OCR Models', 'Computer Vision', 'Deep Learning', 'Python'],
       liveUrl: '#',
       githubUrl: 'https://github.com/kibretmulugeta',
-    },
-    {
-      title: 'Chat Platform',
-      description: 'AI Digital Twin — Multi-Agent Personal Assistant Platform. A full-stack AI-powered chat platform featuring Retrieval-Augmented Generation (RAG), multi-LLM model support (Gemini, Claude, GPT-4), PostgreSQL with pgvector for semantic search, and containerized microservice deployment via Docker. Built with FastAPI backend, React frontend, and a custom LLM abstraction layer.',
-      image: '/assets/images/chat_platform.png',
-      tags: ['FastAPI', 'React', 'PostgreSQL', 'pgvector', 'Docker', 'RAG', 'Gemini', 'Claude', 'GPT-4', 'Python'],
-      liveUrl: 'https://personal-ai-assistant-six-phi.vercel.app/demo',
-      githubUrl: 'https://github.com/kibretmulugeta/personal-ai-assistant',
     },
     {
       title: 'Apartment Rental & Task Management Systems',
