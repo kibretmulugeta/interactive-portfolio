@@ -29,12 +29,20 @@ export async function PUT(req) {
 
     const body = await req.json();
 
+    // Strip out immutable MongoDB internal fields before update
+    const { _id, createdAt, updatedAt, __v, ...updateData } = body;
+
     await connectToDatabase();
 
-    let updated = await ProfileConfig.findOneAndUpdate({}, body, {
-      new: true,
-      upsert: true,
-    });
+    let updated = await ProfileConfig.findOneAndUpdate(
+      {},
+      { $set: updateData },
+      {
+        new: true,
+        upsert: true,
+        runValidators: true,
+      }
+    );
 
     return NextResponse.json({
       success: true,

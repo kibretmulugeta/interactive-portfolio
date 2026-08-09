@@ -235,7 +235,7 @@ export default function Home() {
                           <span key={tIdx} className="tech-tag" style={{ background: 'var(--badge-bg)', border: '1px solid var(--badge-border)', color: 'var(--badge-text)', padding: '0.2rem 0.6rem', borderRadius: '9999px', fontSize: '0.8rem' }}>{tag}</span>
                         ))}
                       </div>
-                      {(proj.liveUrl && proj.liveUrl !== '#') || (proj.githubUrl && proj.githubUrl !== '#' && proj.githubUrl !== 'https://github.com/kibretmulugeta') ? (
+                      {(proj.liveUrl && proj.liveUrl !== '#') || (proj.githubUrl && proj.githubUrl !== '#') ? (
                         <div className="project-actions" style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                           {proj.liveUrl && proj.liveUrl !== '#' && (
                             <a href={proj.liveUrl} target="_blank" rel="noopener noreferrer" className="pill-btn outlined-btn">
@@ -243,7 +243,7 @@ export default function Home() {
                               <i className="fa-solid fa-arrow-up-right-from-square"></i>
                             </a>
                           )}
-                          {proj.githubUrl && proj.githubUrl !== '#' && proj.githubUrl !== 'https://github.com/kibretmulugeta' && (
+                          {proj.githubUrl && proj.githubUrl !== '#' && (
                             <a href={proj.githubUrl} target="_blank" rel="noopener noreferrer" className="pill-btn outlined-btn">
                               <span>Source Code</span>
                               <i className="fa-brands fa-github"></i>

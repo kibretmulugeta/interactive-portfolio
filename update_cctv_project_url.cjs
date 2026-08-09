@@ -30,14 +30,16 @@ async function run() {
 
     const projects = config.toObject().projects || [];
 
-    const targetUrl = 'https://github.com/kibretmulugeta/cctv-intelligent-analysis';
+    const targetLiveUrl = 'https://cctv-intelligent-analysis.vercel.app/';
+    const targetGithubUrl = 'https://github.com/kibretmulugeta/cctv-intelligent-analysis';
 
     const updatedProjects = projects.map(p => {
       if (p.title && p.title.toLowerCase().includes('cctv')) {
-        console.log(`Updating githubUrl for project [${p.title}]`);
+        console.log(`Updating liveUrl and githubUrl for project [${p.title}]`);
         return {
           ...p,
-          githubUrl: targetUrl,
+          liveUrl: targetLiveUrl,
+          githubUrl: targetGithubUrl,
         };
       }
       return p;

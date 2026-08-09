@@ -35,7 +35,7 @@ export const defaultProfileData = {
       description: 'Designed real-time solutions for monitoring CCTV video streams with capabilities in object detection, activity analysis, and AI-based face recognition for identity verification.',
       image: '/assets/images/event_3.png',
       tags: ['CNN', 'OpenCV', 'Computer Vision', 'Face Recognition'],
-      liveUrl: '#',
+      liveUrl: 'https://cctv-intelligent-analysis.vercel.app/',
       githubUrl: 'https://github.com/kibretmulugeta/cctv-intelligent-analysis',
     },
     {
@@ -97,12 +97,6 @@ export const defaultProfileData = {
       title: 'MONAI Hands-on Workshop',
       text: 'Leading a multi-gpu medical image segmentation lab using PyTorch and MONAI framework.',
       image: '/assets/images/event_3.png',
-    },
-    {
-      date: 'Dec 2024',
-      title: 'Health Innovation Award',
-      text: 'Honored for pioneering reward-driven optimization methods in diagnostic segmentation.',
-      image: '/assets/images/event_4.png',
     },
   ],
   experience: [

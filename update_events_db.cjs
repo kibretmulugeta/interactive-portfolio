@@ -69,12 +69,6 @@ async function updateEvents() {
         text: 'Leading a multi-gpu medical image segmentation lab using PyTorch and MONAI framework.',
         image: '/assets/images/event_3.png',
       },
-      {
-        date: 'Dec 2024',
-        title: 'Health Innovation Award',
-        text: 'Honored for pioneering reward-driven optimization methods in diagnostic segmentation.',
-        image: '/assets/images/event_4.png',
-      },
     ];
 
     await config.save();

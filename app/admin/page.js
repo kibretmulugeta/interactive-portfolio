@@ -173,18 +173,20 @@ export default function AdminDashboardPage() {
     }));
   };
 
-  const saveProfileCMS = async (e) => {
-    if (e) e.preventDefault();
+  const saveProfileCMS = async (e, customData = null) => {
+    if (e && e.preventDefault) e.preventDefault();
     setSavingProfile(true);
     setProfileMessage(null);
+    const dataToSave = customData || profileData;
     try {
       const res = await fetch('/api/admin/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(profileData),
+        body: JSON.stringify(dataToSave),
       });
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || 'Failed to save changes.');
+      if (result.data) setProfileData(result.data);
       setProfileMessage({ type: 'success', text: 'Profile & Resume settings saved live!' });
     } catch (err) {
       setProfileMessage({ type: 'error', text: err.message });
@@ -193,18 +195,20 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const saveProjectsCMS = async (e) => {
-    if (e) e.preventDefault();
+  const saveProjectsCMS = async (e, customData = null) => {
+    if (e && e.preventDefault) e.preventDefault();
     setSavingProfile(true);
     setProjectMessage(null);
+    const dataToSave = customData || profileData;
     try {
       const res = await fetch('/api/admin/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(profileData),
+        body: JSON.stringify(dataToSave),
       });
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || 'Failed to save projects.');
+      if (result.data) setProfileData(result.data);
       setProjectMessage({ type: 'success', text: 'Project portfolio changes saved live to MongoDB!' });
     } catch (err) {
       setProjectMessage({ type: 'error', text: err.message });
@@ -213,18 +217,20 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const saveEventsCMS = async (e) => {
-    if (e) e.preventDefault();
+  const saveEventsCMS = async (e, customData = null) => {
+    if (e && e.preventDefault) e.preventDefault();
     setSavingProfile(true);
     setEventMessage(null);
+    const dataToSave = customData || profileData;
     try {
       const res = await fetch('/api/admin/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(profileData),
+        body: JSON.stringify(dataToSave),
       });
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || 'Failed to save events.');
+      if (result.data) setProfileData(result.data);
       setEventMessage({ type: 'success', text: 'Events & Podcasts changes saved live to MongoDB!' });
     } catch (err) {
       setEventMessage({ type: 'error', text: err.message });
@@ -234,19 +240,17 @@ export default function AdminDashboardPage() {
   };
 
   // Project CRUD Handlers
-  const handleAddProject = (e) => {
+  const handleAddProject = async (e) => {
     e.preventDefault();
     const tagArray = typeof newProject.tags === 'string' ? newProject.tags.split(',').map(t => t.trim()).filter(Boolean) : [];
     const createdProject = { ...newProject, tags: tagArray.length > 0 ? tagArray : ['AI', 'PyTorch'] };
+    const updatedProjects = [...(profileData?.projects || []), createdProject];
+    const updatedProfile = { ...profileData, projects: updatedProjects };
 
-    setProfileData(prev => ({
-      ...prev,
-      projects: [...(prev.projects || []), createdProject],
-    }));
-
+    setProfileData(updatedProfile);
     setNewProject({ title: '', description: '', image: '', tags: '', liveUrl: '#', githubUrl: 'https://github.com/kibretmulugeta' });
     setShowAddProject(false);
-    setProjectMessage({ type: 'success', text: 'New project added! Click "Save All Projects Live to MongoDB" below to publish.' });
+    await saveProjectsCMS(null, updatedProfile);
   };
 
   const handleProjectEdit = (index, field, value) => {
@@ -261,13 +265,12 @@ export default function AdminDashboardPage() {
     });
   };
 
-  const handleDeleteProject = (index) => {
+  const handleDeleteProject = async (index) => {
     if (confirm('Are you sure you want to delete this project?')) {
-      setProfileData(prev => ({
-        ...prev,
-        projects: prev.projects.filter((_, idx) => idx !== index),
-      }));
-      setProjectMessage({ type: 'success', text: 'Project removed. Click "Save All Projects Live to MongoDB" to update database.' });
+      const updatedProjects = (profileData?.projects || []).filter((_, idx) => idx !== index);
+      const updatedProfile = { ...profileData, projects: updatedProjects };
+      setProfileData(updatedProfile);
+      await saveProjectsCMS(null, updatedProfile);
     }
   };
 
@@ -304,24 +307,22 @@ export default function AdminDashboardPage() {
     });
   };
 
-  const handleAddEvent = (e) => {
+  const handleAddEvent = async (e) => {
     e.preventDefault();
-    setProfileData(prev => ({
-      ...prev,
-      events: [...(prev.events || []), newEvent],
-    }));
+    const updatedEvents = [...(profileData?.events || []), newEvent];
+    const updatedProfile = { ...profileData, events: updatedEvents };
+    setProfileData(updatedProfile);
     setNewEvent({ title: '', date: '', text: '', image: '' });
     setShowAddEvent(false);
-    setEventMessage({ type: 'success', text: 'New event added! Click "Save All Events Live to MongoDB" to publish.' });
+    await saveEventsCMS(null, updatedProfile);
   };
 
-  const handleDeleteEvent = (index) => {
+  const handleDeleteEvent = async (index) => {
     if (confirm('Are you sure you want to delete this event?')) {
-      setProfileData(prev => ({
-        ...prev,
-        events: prev.events.filter((_, idx) => idx !== index),
-      }));
-      setEventMessage({ type: 'success', text: 'Event deleted. Click "Save All Events Live to MongoDB" to update database.' });
+      const updatedEvents = (profileData?.events || []).filter((_, idx) => idx !== index);
+      const updatedProfile = { ...profileData, events: updatedEvents };
+      setProfileData(updatedProfile);
+      await saveEventsCMS(null, updatedProfile);
     }
   };
 
@@ -811,6 +812,29 @@ export default function AdminDashboardPage() {
                         />
                       </div>
 
+                      <div className="form-grid" style={{ marginTop: '1rem' }}>
+                        <div className="form-group">
+                          <label>Live Preview URL</label>
+                          <input
+                            type="text"
+                            className="form-input"
+                            value={newProject.liveUrl}
+                            onChange={(e) => setNewProject({ ...newProject, liveUrl: e.target.value })}
+                            placeholder="https://cctv-intelligent-analysis.vercel.app/"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>GitHub Repository URL</label>
+                          <input
+                            type="text"
+                            className="form-input"
+                            value={newProject.githubUrl}
+                            onChange={(e) => setNewProject({ ...newProject, githubUrl: e.target.value })}
+                            placeholder="https://github.com/kibretmulugeta/cctv-intelligent-analysis"
+                          />
+                        </div>
+                      </div>
+
                       <button type="submit" className="submit-btn" style={{ marginTop: '1rem' }}>
                         <i className="fa-solid fa-plus"></i>
                         <span>Add Project to Portfolio</span>
@@ -858,6 +882,29 @@ export default function AdminDashboardPage() {
                         value={proj.description || ''}
                         onChange={(e) => handleProjectEdit(idx, 'description', e.target.value)}
                       ></textarea>
+                    </div>
+
+                    <div className="form-grid" style={{ marginTop: '0.75rem' }}>
+                      <div className="form-group">
+                        <label>Live Preview URL</label>
+                        <input
+                          type="text"
+                          className="form-input"
+                          value={proj.liveUrl || ''}
+                          onChange={(e) => handleProjectEdit(idx, 'liveUrl', e.target.value)}
+                          placeholder="https://cctv-intelligent-analysis.vercel.app/"
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>GitHub Repository URL</label>
+                        <input
+                          type="text"
+                          className="form-input"
+                          value={proj.githubUrl || ''}
+                          onChange={(e) => handleProjectEdit(idx, 'githubUrl', e.target.value)}
+                          placeholder="https://github.com/kibretmulugeta/cctv-intelligent-analysis"
+                        />
+                      </div>
                     </div>
 
                     <div className="form-group" style={{ marginTop: '0.75rem' }}>
