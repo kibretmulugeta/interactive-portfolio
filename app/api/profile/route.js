@@ -31,6 +31,14 @@ export const defaultProfileData = {
       githubUrl: 'https://github.com/kibretmulugeta/personal-ai-assistant',
     },
     {
+      title: 'DSM-5 Psychiatry & Clinical Psychology AI Assistant',
+      description: 'A production-grade DSM-5 Psychiatry & Clinical Psychology AI Assistant (DSM-5 PsychAssist AI) engineered as a clinical decision support system, educational reference guide, and diagnostic decision aid based on official APA DSM-5 / DSM-5-TR standards. Features instant diagnostic criteria breakdown, clinical differential diagnosis pathways, statistical & epidemiological reference metrics (prevalence, gender ratio, onset age, risk factors), interactive validated psychometric assessment tools (PHQ-9, GAD-7, PCL-5), and automated emergency 24/7 crisis safety guardrails.',
+      image: '/assets/images/psychiatry_ai_assistant.png',
+      tags: ['DSM-5', 'Psychiatry AI', 'FastAPI', 'React', 'RAG', 'Clinical AI', 'Psychometrics', 'Python'],
+      liveUrl: 'https://psychiatry-ai-assistant-dsm-5.vercel.app/demo',
+      githubUrl: 'https://github.com/kibretmulugeta/psychiatry_ai_assistant_DSM-5',
+    },
+    {
       title: 'CCTV Intelligent Analysis & Face Recognition',
       description: 'Designed real-time solutions for monitoring CCTV video streams with capabilities in object detection, activity analysis, and AI-based face recognition for identity verification.',
       image: '/assets/images/event_3.png',
