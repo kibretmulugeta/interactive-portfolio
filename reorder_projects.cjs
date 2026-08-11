@@ -33,6 +33,9 @@ async function run() {
     // Find Chat Platform
     const chatProject = projects.find(p => p.title && (p.title.toLowerCase().includes('chat') || p.title.toLowerCase().includes('digital twin')));
 
+    // Find DSM-5 Psychiatry AI Assistant Project
+    const dsm5Project = projects.find(p => p.title && (p.title.toLowerCase().includes('dsm-5') || p.title.toLowerCase().includes('psychiatry')));
+
     // Find CCTV Project
     const cctvProject = projects.find(p => p.title && p.title.toLowerCase().includes('cctv'));
 
@@ -40,12 +43,13 @@ async function run() {
     const otherProjects = projects.filter(p => {
       if (!p.title) return false;
       const t = p.title.toLowerCase();
-      if (t.includes('chat') || t.includes('digital twin') || t.includes('cctv')) return false;
+      if (t.includes('chat') || t.includes('digital twin') || t.includes('dsm-5') || t.includes('psychiatry') || t.includes('cctv')) return false;
       return true;
     });
 
     const orderedProjects = [];
     if (chatProject) orderedProjects.push(chatProject);
+    if (dsm5Project) orderedProjects.push(dsm5Project);
     if (cctvProject) orderedProjects.push(cctvProject);
     orderedProjects.push(...otherProjects);
 
