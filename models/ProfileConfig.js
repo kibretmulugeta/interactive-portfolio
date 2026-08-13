@@ -3,12 +3,12 @@ import mongoose from 'mongoose';
 const ProfileConfigSchema = new mongoose.Schema(
   {
     hero: {
-      name: { type: String, default: 'Kibret Mulugeta' },
-      title: { type: String, default: 'AI ENGINEER | MACHINE LEARNING ENGINEER | FULL-STACK DEVELOPER' },
+      name: { type: String, default: 'Kibret Mulugeta Alemu' },
+      title: { type: String, default: 'AI Engineer & Medical Imaging Researcher' },
       bio: {
         type: String,
         default:
-          'AI Engineer, Machine Learning Engineer, Full-Stack Developer, and Systems Engineer with an MSc in Computer Engineering specializing in Artificial Intelligence and Data Engineering. Experienced in designing intelligent systems, developing deep learning models, building full-stack web applications, and deploying scalable software solutions.',
+          'AI Engineer and Medical Imaging Researcher specializing in deep learning, medical image segmentation, and bio-inspired optimization algorithms. Experienced in designing neural plasticity-inspired optimization frameworks for hyperparameter tuning and implementing U-Net/Attention U-Net architectures for brain MRI analysis. Skilled in end-to-end medical imaging pipelines using PyTorch and MONAI. Seeking graduate research opportunities in Computer Science focusing on computational intelligence, medical image analysis, and AI-driven healthcare systems.',
       },
       photoUrl: { type: String, default: '/assets/images/kibret_photo.jpg' },
       resumeUrl: { type: String, default: '/api/resume/download' },
@@ -18,6 +18,9 @@ const ProfileConfigSchema = new mongoose.Schema(
       scholarUrl: { type: String, default: 'https://scholar.google.com' },
       twitterUrl: { type: String, default: 'https://twitter.com' },
       email: { type: String, default: 'kibretmail@gmail.com' },
+      phone: { type: String, default: '+251 947369090' },
+      location: { type: String, default: 'Addis Ababa, Ethiopia' },
+      website: { type: String, default: 'https://kibretmulugeta.pro.et' },
     },
     resumeDataUri: {
       type: String,
@@ -69,6 +72,26 @@ const ProfileConfigSchema = new mongoose.Schema(
         thesis: String,
       },
     ],
+    researchExperience: [
+      {
+        title: String,
+        role: String,
+        institution: String,
+        date: String,
+        thesisTitle: String,
+        bullets: [String],
+      },
+    ],
+    skills: {
+      deepLearning: [String],
+      medicalImaging: [String],
+      optimization: [String],
+      dataEngineering: [String],
+      mlops: [String],
+      programmingLanguages: [String],
+      cloudPlatforms: [String],
+    },
+    researchInterests: [String],
   },
   {
     timestamps: true,
@@ -76,3 +99,4 @@ const ProfileConfigSchema = new mongoose.Schema(
 );
 
 export default mongoose.models.ProfileConfig || mongoose.model('ProfileConfig', ProfileConfigSchema);
+

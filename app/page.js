@@ -50,6 +50,65 @@ export default function Home() {
   const projects = profile?.projects || [];
   const events = profile?.events || [];
   const experience = profile?.experience || [];
+  const researchExperience = profile?.researchExperience || [
+    {
+      title: "Graduate Researcher - Master's Thesis",
+      role: "Graduate Researcher",
+      institution: 'Bahir Dar University',
+      date: '2023 - 2025',
+      thesisTitle: 'Reward-Driven Neural Plasticity Inspired Optimization for Enhancing U-net Based Medical Image Segmentation',
+      bullets: [
+        'Designed a biologically inspired optimization algorithm based on neural plasticity and reward-driven learning.',
+        'Developed deep learning pipelines using PyTorch and TensorFlow for brain MRI segmentation (tumor & stroke lesions).',
+        'Implemented preprocessing workflows including normalization, resampling, and augmentation for NIfTI and DICOM datasets.',
+        'Evaluated performance using Dice Coefficient, IoU, Precision, and Recall metrics.',
+        'Achieved improved convergence stability and segmentation accuracy compared to Random Search and Genetic Algorithms.',
+      ],
+    },
+    {
+      title: 'Neuro-Inspired U-Net Optimization Project (Open Source)',
+      role: 'Lead Developer',
+      institution: 'GitHub Project',
+      date: '2023 - 2025',
+      bullets: [
+        'Developed a reproducible Python framework integrating bio-inspired optimization into deep learning training.',
+        'Implemented Attention U-Net models for fine-grained medical image segmentation.',
+        'Built automated medical imaging pipelines using MONAI and SimpleITK (skull stripping, preprocessing, artifact removal).',
+        'Designed modular codebase for research reproducibility and extension.',
+      ],
+    },
+  ];
+  const education = profile?.education || [
+    {
+      degree: 'Master of Science in Computer Engineering (AI & Data Engineering)',
+      institution: 'Bahir Dar University, Ethiopia',
+      date: '2025',
+      thesis: 'GPA: 3.45/4.0',
+    },
+    {
+      degree: 'Bachelor of Science in Electrical and Computer Engineering',
+      institution: 'Debre Berhan University, Ethiopia',
+      date: '2021',
+      thesis: '',
+    },
+  ];
+  const skills = profile?.skills || {
+    deepLearning: ['PyTorch', 'TensorFlow', 'Keras', 'MONAI', 'Scikit-learn'],
+    medicalImaging: ['NIFTI', 'DICOM', 'SimpleITK', 'NiBabel', 'OpenCV'],
+    optimization: ['Bio-inspired Optimization', 'Neural Plasticity Learning', 'Genetic Algorithms', 'Particle Swarm Optimization (PSO)', 'Hyperparameter Optimization'],
+    dataEngineering: ['NumPy', 'Pandas', 'SciPy', 'SQL', 'Apache Spark'],
+    mlops: ['Linux', 'Docker', 'MLflow', 'Git', 'Jupyter Notebook', 'Google Colab', 'Overleaf'],
+    programmingLanguages: ['Python', 'C++', 'Java', 'SQL', 'LaTeX'],
+    cloudPlatforms: ['AWS', 'Google Cloud Platform (GCP)', 'Microsoft Azure'],
+  };
+  const researchInterests = profile?.researchInterests || [
+    'Medical Image Analysis (MRI / CT segmentation, neuroimaging)',
+    'Bio-inspired and Neuro-inspired Learning Systems',
+    'Explainable AI (XAI) for Healthcare Systems',
+    'Deep Learning Optimization and Architecture Design',
+    'Domain Adaptation in Clinical AI',
+    'Pediatric Neuroimaging and Tumor Analysis',
+  ];
 
   const filteredBlogs = activeCategory === 'all' ? blogs : blogs.filter(b => b.category === activeCategory);
 
@@ -60,13 +119,6 @@ export default function Home() {
         {/* Hero / About Section */}
         <section className="hero-section" id="about">
           <div className="container">
-            <div className="badge-wrapper">
-              <div className="pill-badge">
-                <span className="badge-pulse"></span>
-                <span className="badge-text">{hero.badgeText}</span>
-              </div>
-            </div>
-
             <div className="card hero-card">
               <div className="hero-split">
                 <div className="hero-image-col">
@@ -79,6 +131,12 @@ export default function Home() {
                 <div className="hero-content-col">
                   <h1 className="hero-name">{hero.name}</h1>
                   <h2 className="hero-subtitle">{hero.title}</h2>
+
+                  <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', margin: '0.5rem 0 1rem 0', fontSize: '0.875rem', color: 'var(--accent-light)' }}>
+                    <span><i className="fa-solid fa-location-dot"></i> {hero.location || 'Addis Ababa, Ethiopia'}</span>
+                    <span><i className="fa-solid fa-phone"></i> {hero.phone || '+251 947369090'}</span>
+                    <span><i className="fa-solid fa-globe"></i> <a href={hero.website || 'https://kibretmulugeta.pro.et'} target="_blank" rel="noreferrer" style={{ color: 'var(--accent-light)' }}>kibretmulugeta.pro.et</a></span>
+                  </div>
 
                   <p className="hero-bio">{hero.bio}</p>
 
@@ -113,6 +171,144 @@ export default function Home() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Vertical Connector */}
+        <div className="vertical-connector">
+          <div className="connector-line"></div>
+          <span className="connector-dots">⋮</span>
+          <div className="connector-line"></div>
+        </div>
+
+        {/* Technical Skills Section */}
+        <section className="section skills-section" id="skills">
+          <div className="container">
+            <div className="section-header">
+              <h2 className="section-title">Technical Skills</h2>
+              <p className="section-subtitle">Core competencies in Deep Learning, Medical Imaging, Bio-inspired Optimization, MLOps, and Cloud Engineering.</p>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+              <div className="card" style={{ padding: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--accent-light)' }}><i className="fa-solid fa-brain"></i> Deep Learning & AI</h3>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  {skills.deepLearning?.map((s, idx) => (
+                    <span key={idx} className="tech-tag" style={{ background: 'var(--badge-bg)', border: '1px solid var(--badge-border)', padding: '0.3rem 0.7rem', borderRadius: '9999px', fontSize: '0.85rem' }}>{s}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="card" style={{ padding: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--accent-light)' }}><i className="fa-solid fa-microscope"></i> Medical Imaging</h3>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  {skills.medicalImaging?.map((s, idx) => (
+                    <span key={idx} className="tech-tag" style={{ background: 'var(--badge-bg)', border: '1px solid var(--badge-border)', padding: '0.3rem 0.7rem', borderRadius: '9999px', fontSize: '0.85rem' }}>{s}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="card" style={{ padding: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--accent-light)' }}><i className="fa-solid fa-dna"></i> Optimization & AI Methods</h3>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  {skills.optimization?.map((s, idx) => (
+                    <span key={idx} className="tech-tag" style={{ background: 'var(--badge-bg)', border: '1px solid var(--badge-border)', padding: '0.3rem 0.7rem', borderRadius: '9999px', fontSize: '0.85rem' }}>{s}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="card" style={{ padding: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--accent-light)' }}><i className="fa-solid fa-database"></i> Data Engineering</h3>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  {skills.dataEngineering?.map((s, idx) => (
+                    <span key={idx} className="tech-tag" style={{ background: 'var(--badge-bg)', border: '1px solid var(--badge-border)', padding: '0.3rem 0.7rem', borderRadius: '9999px', fontSize: '0.85rem' }}>{s}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="card" style={{ padding: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--accent-light)' }}><i className="fa-solid fa-gears"></i> MLOps & Tools</h3>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  {skills.mlops?.map((s, idx) => (
+                    <span key={idx} className="tech-tag" style={{ background: 'var(--badge-bg)', border: '1px solid var(--badge-border)', padding: '0.3rem 0.7rem', borderRadius: '9999px', fontSize: '0.85rem' }}>{s}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="card" style={{ padding: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--accent-light)' }}><i className="fa-solid fa-code"></i> Programming & Cloud</h3>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  {skills.programmingLanguages?.concat(skills.cloudPlatforms || [])?.map((s, idx) => (
+                    <span key={idx} className="tech-tag" style={{ background: 'var(--badge-bg)', border: '1px solid var(--badge-border)', padding: '0.3rem 0.7rem', borderRadius: '9999px', fontSize: '0.85rem' }}>{s}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Vertical Connector */}
+        <div className="vertical-connector">
+          <div className="connector-line"></div>
+          <span className="connector-dots">⋮</span>
+          <div className="connector-line"></div>
+        </div>
+
+        {/* Research Experience Section */}
+        <section className="section research-section" id="research">
+          <div className="container">
+            <div className="section-header align-left">
+              <h2 className="section-title">Research Experience</h2>
+              <p className="section-subtitle">Bio-inspired neural plasticity algorithms, Brain MRI segmentation, Attention U-Net architectures, and open-source frameworks.</p>
+            </div>
+
+            {researchExperience.map((res, idx) => (
+              <div className="card" key={idx} style={{ padding: '2rem', marginBottom: '1.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                  <div>
+                    <h3 style={{ fontSize: '1.3rem', fontWeight: 600 }}>{res.title}</h3>
+                    <span style={{ color: 'var(--accent-light)', fontSize: '0.95rem' }}>{res.role} | {res.institution}</span>
+                  </div>
+                  <span className="pill-badge" style={{ padding: '0.3rem 0.8rem' }}>{res.date}</span>
+                </div>
+                {res.thesisTitle ? (
+                  <p style={{ fontStyle: 'italic', color: 'var(--text-primary)', marginBottom: '1rem', fontWeight: 500 }}>
+                    Thesis: {res.thesisTitle}
+                  </p>
+                ) : null}
+                <ul style={{ listStyle: 'disc', paddingLeft: '1.25rem', color: 'var(--text-secondary)' }}>
+                  {res.bullets?.map((bullet, bIdx) => (
+                    <li key={bIdx} style={{ marginBottom: '0.5rem' }}>{bullet}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Vertical Connector */}
+        <div className="vertical-connector">
+          <div className="connector-line"></div>
+          <span className="connector-dots">⋮</span>
+          <div className="connector-line"></div>
+        </div>
+
+        {/* Research Interests Section */}
+        <section className="section interests-section" id="interests">
+          <div className="container">
+            <div className="section-header">
+              <h2 className="section-title">Research Interests</h2>
+              <p className="section-subtitle">Primary focus areas for graduate research, academic collaboration, and clinical AI advancements.</p>
+            </div>
+
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center' }}>
+              {researchInterests.map((interest, idx) => (
+                <div key={idx} className="card" style={{ padding: '1rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <i className="fa-solid fa-atom" style={{ color: 'var(--accent-color)' }}></i>
+                  <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{interest}</span>
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -299,26 +495,43 @@ export default function Home() {
         {/* Work & Education Section */}
         <section className="section experience-section" id="experience">
           <div className="container">
-            <div className="section-header align-left">
-              <h2 className="section-title">Work Experience & Education</h2>
-            </div>
-
-            {experience.map((exp, idx) => (
-              <div className="card" key={idx} style={{ padding: '2rem', marginBottom: '1.5rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
-                  <div>
-                    <h3 style={{ fontSize: '1.25rem' }}>{exp.jobTitle}</h3>
-                    <span style={{ color: 'var(--text-secondary)' }}>{exp.company}</span>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
+              <div>
+                <h2 className="section-title" style={{ textAlign: 'left', marginBottom: '1.5rem' }}>Professional Experience</h2>
+                {experience.map((exp, idx) => (
+                  <div className="card" key={idx} style={{ padding: '1.75rem', marginBottom: '1.5rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                      <div>
+                        <h3 style={{ fontSize: '1.2rem', fontWeight: 600 }}>{exp.jobTitle}</h3>
+                        <span style={{ color: 'var(--accent-light)', fontSize: '0.9rem' }}>{exp.company}</span>
+                      </div>
+                      <span className="pill-badge" style={{ padding: '0.2rem 0.7rem' }}>{exp.date}</span>
+                    </div>
+                    <ul style={{ listStyle: 'disc', paddingLeft: '1.2rem', color: 'var(--text-secondary)', fontSize: '0.925rem' }}>
+                      {exp.bullets?.map((bullet, bIdx) => (
+                        <li key={bIdx} style={{ marginBottom: '0.4rem' }}>{bullet}</li>
+                      ))}
+                    </ul>
                   </div>
-                  <span className="pill-badge" style={{ padding: '0.3rem 0.8rem' }}>{exp.date}</span>
-                </div>
-                <ul style={{ listStyle: 'disc', paddingLeft: '1.25rem', color: 'var(--text-secondary)' }}>
-                  {exp.bullets?.map((bullet, bIdx) => (
-                    <li key={bIdx} style={{ marginBottom: '0.5rem' }}>{bullet}</li>
-                  ))}
-                </ul>
+                ))}
               </div>
-            ))}
+
+              <div>
+                <h2 className="section-title" style={{ textAlign: 'left', marginBottom: '1.5rem' }}>Education</h2>
+                {education.map((edu, idx) => (
+                  <div className="card" key={idx} style={{ padding: '1.75rem', marginBottom: '1.5rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                      <span className="pill-badge" style={{ padding: '0.2rem 0.7rem' }}>{edu.date}</span>
+                    </div>
+                    <h3 style={{ fontSize: '1.15rem', fontWeight: 600, marginBottom: '0.4rem' }}>{edu.degree}</h3>
+                    <p style={{ color: 'var(--accent-light)', fontSize: '0.95rem', marginBottom: '0.5rem' }}>{edu.institution}</p>
+                    {edu.thesis ? (
+                      <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{edu.thesis}</p>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
       </main>

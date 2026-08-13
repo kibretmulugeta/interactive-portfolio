@@ -42,20 +42,14 @@ export default function Navbar() {
         <div className={`nav-links-wrapper ${mobileOpen ? 'active' : ''}`}>
           <ul className="nav-links">
             <li><Link href="/#about" className="nav-link">About</Link></li>
-            <li><Link href="/#creativity" className="nav-link">Creativity</Link></li>
+            <li><Link href="/#skills" className="nav-link">Skills</Link></li>
+            <li><Link href="/#research" className="nav-link">Research</Link></li>
+            <li><Link href="/#creativity" className="nav-link">Insights</Link></li>
             <li><Link href="/#projects" className="nav-link">Projects</Link></li>
             <li><Link href="/#events" className="nav-link">Events</Link></li>
             <li><Link href="/#experience" className="nav-link">Experience</Link></li>
             <li><Link href="/contracting" className="nav-link" style={{ color: 'var(--accent-light)', fontWeight: 600 }}>Client Portal</Link></li>
             
-            {!isLoading && user && isAdmin(user) && (
-              <li>
-                <Link href="/admin" className="nav-link" style={{ color: '#facc15', fontWeight: 600 }}>
-                  Admin
-                </Link>
-              </li>
-            )}
-
             {!isLoading && (
               <li>
                 {user ? (

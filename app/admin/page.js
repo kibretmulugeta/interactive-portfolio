@@ -444,7 +444,7 @@ export default function AdminDashboardPage() {
                 <p style={{ color: 'var(--text-secondary)', margin: '1rem 0 2rem 0' }}>
                   Please sign in with an Administrator account to access the dashboard.
                 </p>
-                <a href="/api/auth/login" className="pill-btn outlined-btn" style={{ background: 'var(--accent-color)', color: '#fff' }}>
+                <a href="/api/auth/login?returnTo=/admin" className="pill-btn outlined-btn" style={{ background: 'var(--accent-color)', color: '#fff' }}>
                   Sign In via Auth0 / Google
                 </a>
               </div>
