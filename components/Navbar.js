@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useUser } from '@auth0/nextjs-auth0/client';
+import { isAdmin } from '@/lib/auth';
 import { Sun, Moon, Menu, X, LogIn, LogOut, UserCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -52,20 +53,22 @@ export default function Navbar() {
             <li><Link href="/#experience" className="nav-link" onClick={() => setMobileOpen(false)}>Experience</Link></li>
             <li><Link href="/contracting" className="nav-link" onClick={() => setMobileOpen(false)} style={{ color: 'var(--accent-light)', fontWeight: 600 }}>Client Portal</Link></li>
             
-            {!isLoading && (
-              <li>
-                {user ? (
+            {!isLoading && user && (
+              <>
+                {isAdmin(user) && (
+                  <li>
+                    <Link href="/admin" className="nav-link" onClick={() => setMobileOpen(false)} style={{ color: '#facc15', fontWeight: 600 }}>
+                      Admin
+                    </Link>
+                  </li>
+                )}
+                <li>
                   <a href="/api/auth/logout" className="auth-nav-btn" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                     <LogOut size={16} />
                     <span>Logout ({user.given_name || user.name?.split(' ')[0] || 'User'})</span>
                   </a>
-                ) : (
-                  <a href="/api/auth/login" className="auth-nav-btn" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                    <LogIn size={16} />
-                    <span>Client Login / Register</span>
-                  </a>
-                )}
-              </li>
+                </li>
+              </>
             )}
           </ul>
         </div>
