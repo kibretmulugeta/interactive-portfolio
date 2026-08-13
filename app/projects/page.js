@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import AnimatedSection, { AnimatedCard } from '@/components/AnimatedSection';
+import { defaultProjects } from '@/lib/projects';
 import { Github, ExternalLink, FolderGit2, Layers, ArrowUpRight } from 'lucide-react';
 
 export default function ProjectsPage() {
@@ -22,81 +23,6 @@ export default function ProjectsPage() {
       console.error(err);
     }
   };
-
-  const defaultProjects = [
-    {
-      title: 'Chat Platform (AI Digital Twin & RAG)',
-      category: 'ai',
-      description: 'Multi-Agent Personal Assistant Platform with RAG, multi-LLM support (Gemini, Claude, GPT-4), PostgreSQL pgvector, and FastAPI backend.',
-      image: '/assets/images/chat_platform.png',
-      tags: ['FastAPI', 'React', 'PostgreSQL', 'pgvector', 'Docker', 'RAG', 'Python'],
-      liveUrl: 'https://personal-ai-assistant-six-phi.vercel.app/demo',
-      githubUrl: 'https://github.com/kibretmulugeta/personal-ai-assistant',
-    },
-    {
-      title: 'DSM-5 Psychiatry & Clinical Psychology AI Assistant',
-      category: 'medical',
-      description: 'Clinical decision support system and diagnostic decision aid engineered according to official APA DSM-5 / DSM-5-TR standards.',
-      image: '/assets/images/psychiatry_ai_assistant.png',
-      tags: ['DSM-5', 'Psychiatry AI', 'FastAPI', 'React', 'RAG', 'Clinical AI', 'Python'],
-      liveUrl: 'https://psychiatry-ai-assistant-dsm-5.vercel.app/demo',
-      githubUrl: 'https://github.com/kibretmulugeta/psychiatry_ai_assistant_DSM-5',
-    },
-    {
-      title: 'CCTV Intelligent Analysis & Face Recognition',
-      category: 'ai',
-      description: 'Real-time monitoring system for CCTV video streams featuring object detection, activity analysis, and AI face recognition.',
-      image: '/assets/images/cctv_analysis.png',
-      tags: ['CNN', 'OpenCV', 'Computer Vision', 'Face Recognition', 'Python'],
-      liveUrl: 'https://cctv-intelligent-analysis.vercel.app/',
-      githubUrl: 'https://github.com/kibretmulugeta/cctv-intelligent-analysis',
-    },
-    {
-      title: 'Medical Image Analysis System (U-Net & MONAI)',
-      category: 'medical',
-      description: 'Deep learning models for medical image understanding, Brain MRI segmentation (Attention U-Net, MONAI), and clinical diagnosis support.',
-      image: '/assets/images/medical_image_analysis.png',
-      tags: ['U-Net', 'MONAI', 'PyTorch', 'TensorFlow', 'Brain MRI', 'NIfTI'],
-      liveUrl: 'https://github.com/kibretmulugeta',
-      githubUrl: 'https://github.com/kibretmulugeta',
-    },
-    {
-      title: 'Novel Bio-Inspired Optimization Framework',
-      category: 'ai',
-      description: 'Optimization engine inspired by synaptic plasticity and biological neural mechanisms applied to deep learning hyperparameter tuning.',
-      image: '/assets/images/novel_optimization.png',
-      tags: ['Neural Plasticity', 'Deep Learning', 'PyTorch', 'PSO', 'Optimization'],
-      liveUrl: 'https://github.com/kibretmulugeta',
-      githubUrl: 'https://github.com/kibretmulugeta',
-    },
-    {
-      title: 'Speech Intelligence & Translation Systems',
-      category: 'ai',
-      description: 'Speech-to-Text, Text-to-Speech generation, and Amharic ↔ English machine translation models using advanced NLP transformers.',
-      image: '/assets/images/speech_translation.png',
-      tags: ['NLP', 'Speech Processing', 'Amharic Translation', 'PyTorch', 'Transformers'],
-      liveUrl: 'https://github.com/kibretmulugeta',
-      githubUrl: 'https://github.com/kibretmulugeta',
-    },
-    {
-      title: 'OCR (Optical Character Recognition) System',
-      category: 'ai',
-      description: 'Intelligent OCR pipeline for extracting formatted text and structured data from complex images and scanned clinical documents.',
-      image: '/assets/images/ocr_system.png',
-      tags: ['OCR Models', 'Computer Vision', 'Deep Learning', 'Python'],
-      liveUrl: 'https://github.com/kibretmulugeta',
-      githubUrl: 'https://github.com/kibretmulugeta',
-    },
-    {
-      title: 'Apartment Rental & Task Management Systems',
-      category: 'fullstack',
-      description: 'Full-stack rental platform featuring property management, search workflows, calendar integration, and automated JWT security.',
-      image: '/assets/images/car_plate_detection.png',
-      tags: ['Next.js', 'Node.js', 'FastAPI', 'PostgreSQL', 'React'],
-      liveUrl: 'https://github.com/kibretmulugeta',
-      githubUrl: 'https://github.com/kibretmulugeta',
-    },
-  ];
 
   const rawProjects = profile?.projects && profile.projects.length > 0 ? profile.projects : defaultProjects;
   

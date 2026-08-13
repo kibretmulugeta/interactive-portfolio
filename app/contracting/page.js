@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Navbar from '@/components/Navbar';
+import { defaultProjects } from '@/lib/projects';
 import { Send, CheckCircle2, AlertTriangle, ArrowRight, ShieldCheck, Briefcase, FileText } from 'lucide-react';
 
 function ContractingContent() {
@@ -11,11 +12,11 @@ function ContractingContent() {
   const searchParams = useSearchParams();
   const preselectedProject = searchParams.get('project');
 
-  const [projectsList, setProjectsList] = useState([]);
+  const [projectsList, setProjectsList] = useState(defaultProjects);
   const [formData, setFormData] = useState({
     clientName: '',
     clientEmail: '',
-    projectType: 'Medical Image Analysis System',
+    projectType: defaultProjects[0].title,
     budget: '$5,000 - $15,000',
     description: '',
   });
@@ -42,10 +43,6 @@ function ContractingContent() {
               setFormData(prev => ({ ...prev, projectType: matched.title }));
               return;
             }
-          }
-          // Default selection to first project in list
-          if (data.data.projects[0]?.title) {
-            setFormData(prev => ({ ...prev, projectType: data.data.projects[0].title }));
           }
         }
       } catch (err) {
@@ -184,7 +181,7 @@ function ContractingContent() {
                 <div className="form-group">
                   <label htmlFor="projectType" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <Briefcase size={14} style={{ color: 'var(--accent-light)' }} />
-                    <span>Target Portfolio Project / Contract Specialty</span>
+                    <span>Project Specialty</span>
                   </label>
                   <select
                     id="projectType"
@@ -199,15 +196,6 @@ function ContractingContent() {
                         {p.title}
                       </option>
                     ))}
-                    {/* Fallback default options if list is loading */}
-                    {projectsList.length === 0 && (
-                      <>
-                        <option value="Medical Image Analysis System">Medical Image Analysis System (U-Net & MONAI)</option>
-                        <option value="Chat Platform">Chat Platform (AI Digital Twin & RAG)</option>
-                        <option value="DSM-5 Psychiatry & Clinical Psychology AI Assistant">DSM-5 Psychiatry & Clinical Psychology AI Assistant</option>
-                        <option value="CCTV Intelligent Analysis & Face Recognition">CCTV Intelligent Analysis & Face Recognition</option>
-                      </>
-                    )}
                     <option value="Custom AI Architecture & Consulting">Custom AI Architecture & Consulting</option>
                   </select>
                 </div>
