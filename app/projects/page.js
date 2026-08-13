@@ -247,7 +247,7 @@ export default function ProjectsPage() {
                       </div>
 
                       {/* Action Links */}
-                      <div style={{ display: 'flex', gap: '0.75rem', paddingTop: '0.85rem', borderTop: '1px solid var(--card-border)' }}>
+                      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', paddingTop: '0.85rem', borderTop: '1px solid var(--card-border)' }}>
                         {p.liveUrl && (
                           <a
                             href={p.liveUrl}
@@ -259,20 +259,40 @@ export default function ProjectsPage() {
                               display: 'inline-flex',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              gap: '0.4rem',
-                              fontSize: '0.825rem',
+                              gap: '0.3rem',
+                              fontSize: '0.8rem',
                               fontWeight: 600,
                               background: 'var(--accent-color)',
                               color: '#ffffff',
                               textDecoration: 'none',
-                              padding: '0.5rem 0.8rem',
+                              padding: '0.5rem 0.6rem',
                               borderRadius: '10px',
                             }}
                           >
                             <span>Live Demo</span>
-                            <ArrowUpRight size={15} />
+                            <ArrowUpRight size={14} />
                           </a>
                         )}
+                        <Link
+                          href={`/contracting?project=${encodeURIComponent(p.title)}`}
+                          className="pill-btn"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '0.3rem',
+                            fontSize: '0.8rem',
+                            fontWeight: 600,
+                            background: 'var(--badge-bg)',
+                            color: 'var(--accent-light)',
+                            border: '1px solid var(--badge-border)',
+                            textDecoration: 'none',
+                            padding: '0.5rem 0.65rem',
+                            borderRadius: '10px',
+                          }}
+                        >
+                          <span>Contract</span>
+                        </Link>
                         {p.githubUrl && (
                           <a
                             href={p.githubUrl}
@@ -283,18 +303,18 @@ export default function ProjectsPage() {
                               display: 'inline-flex',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              gap: '0.4rem',
-                              fontSize: '0.825rem',
+                              gap: '0.3rem',
+                              fontSize: '0.8rem',
                               fontWeight: 600,
                               background: 'var(--bg-primary)',
                               color: 'var(--text-primary)',
                               borderColor: 'var(--card-border)',
                               textDecoration: 'none',
-                              padding: '0.5rem 0.85rem',
+                              padding: '0.5rem 0.65rem',
                               borderRadius: '10px',
                             }}
                           >
-                            <Github size={15} />
+                            <Github size={14} />
                             <span>Code</span>
                           </a>
                         )}
