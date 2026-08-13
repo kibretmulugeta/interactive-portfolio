@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { isAdmin } from '@/lib/auth';
+import { Sun, Moon, Menu, X, LogIn, LogOut, UserCheck } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function Navbar() {
   const { user, isLoading } = useUser();
@@ -35,31 +36,32 @@ export default function Navbar() {
           className="mobile-toggle"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle navigation menu"
+          style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', padding: '0.4rem' }}
         >
-          <i className="fa-solid fa-bars"></i>
+          {mobileOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
 
         <div className={`nav-links-wrapper ${mobileOpen ? 'active' : ''}`}>
           <ul className="nav-links">
-            <li><Link href="/#about" className="nav-link">About</Link></li>
-            <li><Link href="/#skills" className="nav-link">Skills</Link></li>
-            <li><Link href="/#research" className="nav-link">Research</Link></li>
-            <li><Link href="/#creativity" className="nav-link">Insights</Link></li>
-            <li><Link href="/#projects" className="nav-link">Projects</Link></li>
-            <li><Link href="/#events" className="nav-link">Events</Link></li>
-            <li><Link href="/#experience" className="nav-link">Experience</Link></li>
-            <li><Link href="/contracting" className="nav-link" style={{ color: 'var(--accent-light)', fontWeight: 600 }}>Client Portal</Link></li>
+            <li><Link href="/#about" className="nav-link" onClick={() => setMobileOpen(false)}>About</Link></li>
+            <li><Link href="/#skills" className="nav-link" onClick={() => setMobileOpen(false)}>Skills</Link></li>
+            <li><Link href="/#research" className="nav-link" onClick={() => setMobileOpen(false)}>Research</Link></li>
+            <li><Link href="/#creativity" className="nav-link" onClick={() => setMobileOpen(false)}>Insights</Link></li>
+            <li><Link href="/#projects" className="nav-link" onClick={() => setMobileOpen(false)}>Projects</Link></li>
+            <li><Link href="/#events" className="nav-link" onClick={() => setMobileOpen(false)}>Events</Link></li>
+            <li><Link href="/#experience" className="nav-link" onClick={() => setMobileOpen(false)}>Experience</Link></li>
+            <li><Link href="/contracting" className="nav-link" onClick={() => setMobileOpen(false)} style={{ color: 'var(--accent-light)', fontWeight: 600 }}>Client Portal</Link></li>
             
             {!isLoading && (
               <li>
                 {user ? (
-                  <a href="/api/auth/logout" className="auth-nav-btn">
-                    <i className="fa-solid fa-right-from-bracket"></i>
+                  <a href="/api/auth/logout" className="auth-nav-btn" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <LogOut size={16} />
                     <span>Logout ({user.given_name || user.name?.split(' ')[0] || 'User'})</span>
                   </a>
                 ) : (
-                  <a href="/api/auth/login" className="auth-nav-btn">
-                    <i className="fa-solid fa-right-to-bracket"></i>
+                  <a href="/api/auth/login" className="auth-nav-btn" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <LogIn size={16} />
                     <span>Client Login / Register</span>
                   </a>
                 )}
@@ -68,10 +70,27 @@ export default function Navbar() {
           </ul>
         </div>
 
-        <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle light and dark theme">
-          <i className="fa-solid fa-moon icon-moon"></i>
-          <i className="fa-solid fa-sun icon-sun"></i>
-        </button>
+        <motion.button
+          whileTap={{ scale: 0.9 }}
+          whileHover={{ scale: 1.1 }}
+          className="theme-toggle"
+          onClick={toggleTheme}
+          aria-label="Toggle light and dark theme"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'var(--badge-bg)',
+            border: '1px solid var(--badge-border)',
+            color: 'var(--accent-light)',
+            borderRadius: '9999px',
+            width: '38px',
+            height: '38px',
+            cursor: 'pointer',
+          }}
+        >
+          {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+        </motion.button>
       </nav>
     </header>
   );

@@ -3,12 +3,22 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
+import AnimatedSection, { AnimatedCard } from '@/components/AnimatedSection';
+import MedicalMriVisualizer from '@/components/MedicalMriVisualizer';
+import { Copy, Check, FileText, ExternalLink, Github, Linkedin, Mail, MapPin, Phone, Globe, BookOpen, Award, Layers, Sparkles } from 'lucide-react';
 
 export default function Home() {
   const [profile, setProfile] = useState(null);
   const [blogs, setBlogs] = useState([]);
   const [activeCategory, setActiveCategory] = useState('all'); // 'all', 'scientific', 'aesthetic'
   const [loading, setLoading] = useState(true);
+  const [copiedBib, setCopiedBib] = useState(false);
+
+  const handleCopyBibTeX = (bibText) => {
+    navigator.clipboard.writeText(bibText);
+    setCopiedBib(true);
+    setTimeout(() => setCopiedBib(false), 2000);
+  };
 
   useEffect(() => {
     fetchProfileAndBlogs();
@@ -259,12 +269,12 @@ export default function Home() {
         <section className="section research-section" id="research">
           <div className="container">
             <div className="section-header align-left">
-              <h2 className="section-title">Research Experience</h2>
-              <p className="section-subtitle">Bio-inspired neural plasticity algorithms, Brain MRI segmentation, Attention U-Net architectures, and open-source frameworks.</p>
+              <h2 className="section-title">Research Experience & Clinical AI Demos</h2>
+              <p className="section-subtitle">Bio-inspired neural plasticity algorithms, Brain MRI segmentation, Attention U-Net architectures, and open-source medical imaging frameworks.</p>
             </div>
 
             {researchExperience.map((res, idx) => (
-              <div className="card" key={idx} style={{ padding: '2rem', marginBottom: '1.5rem' }}>
+              <AnimatedCard key={idx} className="card" style={{ padding: '2rem', marginBottom: '1.5rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.75rem' }}>
                   <div>
                     <h3 style={{ fontSize: '1.3rem', fontWeight: 600 }}>{res.title}</h3>
@@ -273,17 +283,29 @@ export default function Home() {
                   <span className="pill-badge" style={{ padding: '0.3rem 0.8rem' }}>{res.date}</span>
                 </div>
                 {res.thesisTitle ? (
-                  <p style={{ fontStyle: 'italic', color: 'var(--text-primary)', marginBottom: '1rem', fontWeight: 500 }}>
-                    Thesis: {res.thesisTitle}
-                  </p>
+                  <div style={{ background: 'var(--bg-primary)', padding: '0.8rem 1rem', borderRadius: '10px', marginBottom: '1rem', border: '1px solid var(--card-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <p style={{ fontStyle: 'italic', color: 'var(--text-primary)', fontWeight: 500, margin: 0, fontSize: '0.925rem' }}>
+                      <strong>Thesis Title:</strong> {res.thesisTitle}
+                    </p>
+                    <button
+                      onClick={() => handleCopyBibTeX(`@mastersthesis{alemu2025reward,\n  title={${res.thesisTitle}},\n  author={Alemu, Kibret Mulugeta},\n  year={2025},\n  school={Bahir Dar University}\n}`)}
+                      style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.775rem', padding: '0.35rem 0.65rem', borderRadius: '6px', border: '1px solid var(--badge-border)', background: 'var(--badge-bg)', color: 'var(--accent-light)', cursor: 'pointer' }}
+                    >
+                      {copiedBib ? <Check size={14} /> : <Copy size={14} />}
+                      {copiedBib ? 'BibTeX Copied!' : 'Copy BibTeX'}
+                    </button>
+                  </div>
                 ) : null}
                 <ul style={{ listStyle: 'disc', paddingLeft: '1.25rem', color: 'var(--text-secondary)' }}>
                   {res.bullets?.map((bullet, bIdx) => (
                     <li key={bIdx} style={{ marginBottom: '0.5rem' }}>{bullet}</li>
                   ))}
                 </ul>
-              </div>
+              </AnimatedCard>
             ))}
+
+            {/* Interactive Brain MRI Visualizer Component */}
+            <MedicalMriVisualizer />
           </div>
         </section>
 
