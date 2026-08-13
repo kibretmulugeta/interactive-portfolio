@@ -44,13 +44,13 @@ export default function Navbar() {
 
         <div className={`nav-links-wrapper ${mobileOpen ? 'active' : ''}`}>
           <ul className="nav-links">
-            <li><Link href="/#about" className="nav-link" onClick={() => setMobileOpen(false)}>About</Link></li>
-            <li><Link href="/#skills" className="nav-link" onClick={() => setMobileOpen(false)}>Skills</Link></li>
-            <li><Link href="/#research" className="nav-link" onClick={() => setMobileOpen(false)}>Research</Link></li>
-            <li><Link href="/#creativity" className="nav-link" onClick={() => setMobileOpen(false)}>Insights</Link></li>
-            <li><Link href="/#projects" className="nav-link" onClick={() => setMobileOpen(false)}>Projects</Link></li>
-            <li><Link href="/#events" className="nav-link" onClick={() => setMobileOpen(false)}>Events</Link></li>
-            <li><Link href="/#experience" className="nav-link" onClick={() => setMobileOpen(false)}>Experience</Link></li>
+            <li><Link href="/" className="nav-link" onClick={() => setMobileOpen(false)}>About</Link></li>
+            <li><Link href="/skills" className="nav-link" onClick={() => setMobileOpen(false)}>Skills</Link></li>
+            <li><Link href="/research" className="nav-link" onClick={() => setMobileOpen(false)}>Research</Link></li>
+            <li><Link href="/projects" className="nav-link" onClick={() => setMobileOpen(false)}>Projects</Link></li>
+            <li><Link href="/blog" className="nav-link" onClick={() => setMobileOpen(false)}>Insights</Link></li>
+            <li><Link href="/events" className="nav-link" onClick={() => setMobileOpen(false)}>Events</Link></li>
+            <li><Link href="/experience" className="nav-link" onClick={() => setMobileOpen(false)}>Experience</Link></li>
             <li><Link href="/contracting" className="nav-link" onClick={() => setMobileOpen(false)} style={{ color: 'var(--accent-light)', fontWeight: 600 }}>Client Portal</Link></li>
             
             {!isLoading && user && (
