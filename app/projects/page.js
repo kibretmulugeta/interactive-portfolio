@@ -180,7 +180,7 @@ export default function ProjectsPage() {
 
                       {/* Action Links */}
                       <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', paddingTop: '0.85rem', borderTop: '1px solid var(--card-border)' }}>
-                        {p.liveUrl && (
+                        {p.liveUrl && p.liveUrl !== '#' && p.liveUrl.startsWith('http') && (
                           <a
                             href={p.liveUrl}
                             target="_blank"
