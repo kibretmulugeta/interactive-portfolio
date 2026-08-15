@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import AnimatedSection, { AnimatedCard } from '@/components/AnimatedSection';
+import CategoryIcon from '@/components/CategoryIcon';
 import { Cpu, Microscope, FolderGit2, BookOpen, Calendar, Briefcase, ArrowRight, Download, Mail, Phone, MapPin, Globe, Github, Linkedin, GraduationCap, Sparkles } from 'lucide-react';
 
 export default function Home() {
@@ -43,31 +44,31 @@ export default function Home() {
     {
       title: 'Technical Skills',
       desc: 'Deep Learning, MONAI, PyTorch, Bio-inspired Optimization, MLOps & Cloud.',
-      icon: Cpu,
+      iconType: 'technical-skills',
       link: '/skills',
       badge: 'Core Competencies',
-      color: 'var(--accent-color)',
+      color: '#6366f1',
     },
     {
       title: 'Research & Clinical AI',
       desc: 'Brain MRI segmentation, Attention U-Net, and interactive slice visualizer.',
-      icon: Microscope,
+      iconType: 'research',
       link: '/research',
       badge: 'Master\'s Research',
-      color: 'var(--accent-cyan)',
+      color: '#06b6d4',
     },
     {
       title: 'Software & Repositories',
       desc: 'Selected open-source frameworks, clinical tools, and full-stack applications.',
-      icon: FolderGit2,
+      iconType: 'projects',
       link: '/projects',
       badge: 'Open Source',
-      color: '#eab308',
+      color: '#f59e0b',
     },
     {
       title: 'Technical Insights & Blog',
       desc: 'Scientific publications on medical AI and reflections on computational aesthetics.',
-      icon: BookOpen,
+      iconType: 'blog',
       link: '/blog',
       badge: 'Articles',
       color: '#ec4899',
@@ -75,7 +76,7 @@ export default function Home() {
     {
       title: 'Events & Conferences',
       desc: 'Academic symposium defense presentations, workshops, and speaking engagements.',
-      icon: Calendar,
+      iconType: 'events',
       link: '/events',
       badge: 'Academic Gatherings',
       color: '#10b981',
@@ -83,10 +84,10 @@ export default function Home() {
     {
       title: 'Experience & Education',
       desc: 'MSc in Computer Engineering qualifications and systems engineering background.',
-      icon: Briefcase,
+      iconType: 'experience',
       link: '/experience',
       badge: 'Professional Path',
-      color: '#818cf8',
+      color: '#3b82f6',
     },
   ];
 
@@ -176,14 +177,11 @@ export default function Home() {
             {/* Grid of Section Cards */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
               {navCategories.map((cat, idx) => {
-                const Icon = cat.icon;
                 return (
                   <AnimatedCard key={idx} className="card" style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-                        <div style={{ padding: '0.65rem', borderRadius: '12px', background: `${cat.color}15`, color: cat.color }}>
-                          <Icon size={26} />
-                        </div>
+                        <CategoryIcon type={cat.iconType} size={54} />
                         <span className="pill-badge" style={{ fontSize: '0.775rem' }}>{cat.badge}</span>
                       </div>
 

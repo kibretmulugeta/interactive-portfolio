@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import AnimatedSection, { AnimatedCard } from '@/components/AnimatedSection';
+import CategoryIcon from '@/components/CategoryIcon';
 import { defaultProjects } from '@/lib/projects';
 import { Github, ExternalLink, FolderGit2, Layers, ArrowUpRight } from 'lucide-react';
 
@@ -47,10 +48,15 @@ export default function ProjectsPage() {
           <div className="container">
             <AnimatedSection>
               <div className="section-header align-left" style={{ marginBottom: '2rem' }}>
-                <span className="pill-badge" style={{ background: 'var(--badge-bg)', color: 'var(--accent-light)' }}>
-                  Software & AI Directory
-                </span>
-                <h1 className="section-title" style={{ fontSize: '2.5rem', marginTop: '0.5rem' }}>Projects & Open Source Repositories</h1>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
+                  <CategoryIcon type="projects" size={54} />
+                  <div>
+                    <span className="pill-badge" style={{ background: 'var(--badge-bg)', color: 'var(--accent-light)' }}>
+                      Software & AI Directory
+                    </span>
+                    <h1 className="section-title" style={{ fontSize: '2.2rem', marginTop: '0.25rem' }}>Projects & Open Source Repositories</h1>
+                  </div>
+                </div>
                 <p className="section-subtitle">
                   Selected open-source frameworks, clinical AI segmentation tools, and full-stack software systems.
                 </p>

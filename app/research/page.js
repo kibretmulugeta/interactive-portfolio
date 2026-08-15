@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import AnimatedSection, { AnimatedCard } from '@/components/AnimatedSection';
 import MedicalMriVisualizer from '@/components/MedicalMriVisualizer';
+import CategoryIcon from '@/components/CategoryIcon';
 import { Copy, Check, Atom, BookOpen, Layers } from 'lucide-react';
 
 export default function ResearchPage() {
@@ -76,10 +77,15 @@ export default function ResearchPage() {
           <div className="container">
             <AnimatedSection>
               <div className="section-header align-left" style={{ marginBottom: '2rem' }}>
-                <span className="pill-badge" style={{ background: 'rgba(8, 145, 178, 0.12)', color: 'var(--accent-cyan)', border: '1px solid rgba(8, 145, 178, 0.25)' }}>
-                  Academic & Clinical Research
-                </span>
-                <h1 className="section-title" style={{ fontSize: '2.5rem', marginTop: '0.5rem' }}>Research & Clinical AI Work</h1>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
+                  <CategoryIcon type="research" size={54} />
+                  <div>
+                    <span className="pill-badge" style={{ background: 'rgba(8, 145, 178, 0.12)', color: 'var(--accent-cyan)', border: '1px solid rgba(8, 145, 178, 0.25)' }}>
+                      Academic & Clinical Research
+                    </span>
+                    <h1 className="section-title" style={{ fontSize: '2.2rem', marginTop: '0.25rem' }}>Research & Clinical AI Work</h1>
+                  </div>
+                </div>
                 <p className="section-subtitle">
                   Investigating reward-driven neural plasticity algorithms for medical image segmentation and Attention U-Net architectures.
                 </p>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import AnimatedSection, { AnimatedCard } from '@/components/AnimatedSection';
+import CategoryIcon from '@/components/CategoryIcon';
 import { Cpu, Microscope, Zap, Database, Terminal, Code2, Cloud, CheckCircle2 } from 'lucide-react';
 
 export default function SkillsPage() {
@@ -43,10 +44,15 @@ export default function SkillsPage() {
           <div className="container">
             <AnimatedSection>
               <div className="section-header align-left" style={{ marginBottom: '2.5rem' }}>
-                <span className="pill-badge" style={{ background: 'var(--badge-bg)', color: 'var(--accent-light)' }}>
-                  Technical Architecture
-                </span>
-                <h1 className="section-title" style={{ fontSize: '2.5rem', marginTop: '0.5rem' }}>Skills & Engineering Competencies</h1>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
+                  <CategoryIcon type="technical-skills" size={54} />
+                  <div>
+                    <span className="pill-badge" style={{ background: 'var(--badge-bg)', color: 'var(--accent-light)' }}>
+                      Technical Architecture
+                    </span>
+                    <h1 className="section-title" style={{ fontSize: '2.2rem', marginTop: '0.25rem' }}>Skills & Engineering Competencies</h1>
+                  </div>
+                </div>
                 <p className="section-subtitle">
                   Specialized stack in Deep Learning, Medical Imaging Pipelines, Bio-inspired Metaheuristics, MLOps, and Distributed Computing.
                 </p>

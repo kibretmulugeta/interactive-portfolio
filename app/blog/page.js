@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import AnimatedSection, { AnimatedCard } from '@/components/AnimatedSection';
+import CategoryIcon from '@/components/CategoryIcon';
 import { BookOpen, Sparkles, Clock, ArrowRight } from 'lucide-react';
 
 export default function BlogIndexPage() {
@@ -36,10 +37,15 @@ export default function BlogIndexPage() {
           <div className="container">
             <AnimatedSection>
               <div className="section-header align-left" style={{ marginBottom: '2rem' }}>
-                <span className="pill-badge" style={{ background: 'var(--badge-bg)', color: 'var(--accent-light)' }}>
-                  Technical & Aesthetic Insights
-                </span>
-                <h1 className="section-title" style={{ fontSize: '2.5rem', marginTop: '0.5rem' }}>Articles & Reflections</h1>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
+                  <CategoryIcon type="blog" size={54} />
+                  <div>
+                    <span className="pill-badge" style={{ background: 'var(--badge-bg)', color: 'var(--accent-light)' }}>
+                      Technical & Aesthetic Insights
+                    </span>
+                    <h1 className="section-title" style={{ fontSize: '2.2rem', marginTop: '0.25rem' }}>Articles & Reflections</h1>
+                  </div>
+                </div>
                 <p className="section-subtitle">
                   Scientific papers on medical imaging deep learning alongside reflections on bio-inspired optimization and design aesthetic balance.
                 </p>

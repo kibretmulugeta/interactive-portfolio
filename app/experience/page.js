@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import AnimatedSection, { AnimatedCard } from '@/components/AnimatedSection';
+import CategoryIcon from '@/components/CategoryIcon';
 import { Briefcase, GraduationCap, Calendar, Building, CheckCircle2 } from 'lucide-react';
 
 export default function ExperiencePage() {
@@ -58,10 +59,15 @@ export default function ExperiencePage() {
           <div className="container">
             <AnimatedSection>
               <div className="section-header align-left" style={{ marginBottom: '2.5rem' }}>
-                <span className="pill-badge" style={{ background: 'var(--badge-bg)', color: 'var(--accent-light)' }}>
-                  Professional Background
-                </span>
-                <h1 className="section-title" style={{ fontSize: '2.5rem', marginTop: '0.5rem' }}>Experience & Education</h1>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
+                  <CategoryIcon type="experience" size={54} />
+                  <div>
+                    <span className="pill-badge" style={{ background: 'var(--badge-bg)', color: 'var(--accent-light)' }}>
+                      Professional Background
+                    </span>
+                    <h1 className="section-title" style={{ fontSize: '2.2rem', marginTop: '0.25rem' }}>Experience & Education</h1>
+                  </div>
+                </div>
                 <p className="section-subtitle">
                   Academic qualifications in Computer Engineering alongside industry experience in AI, Systems Architecture, and Consulting.
                 </p>

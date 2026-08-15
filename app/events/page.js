@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import AnimatedSection, { AnimatedCard } from '@/components/AnimatedSection';
+import CategoryIcon from '@/components/CategoryIcon';
 import { Calendar, MapPin, Award, Presentation } from 'lucide-react';
 
 export default function EventsPage() {
@@ -45,10 +46,15 @@ export default function EventsPage() {
           <div className="container">
             <AnimatedSection>
               <div className="section-header align-left" style={{ marginBottom: '2.5rem' }}>
-                <span className="pill-badge" style={{ background: 'var(--badge-bg)', color: 'var(--accent-light)' }}>
-                  Academic & Professional Gatherings
-                </span>
-                <h1 className="section-title" style={{ fontSize: '2.5rem', marginTop: '0.5rem' }}>Events, Conferences & Speaking</h1>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
+                  <CategoryIcon type="events" size={54} />
+                  <div>
+                    <span className="pill-badge" style={{ background: 'var(--badge-bg)', color: 'var(--accent-light)' }}>
+                      Academic & Professional Gatherings
+                    </span>
+                    <h1 className="section-title" style={{ fontSize: '2.2rem', marginTop: '0.25rem' }}>Events, Conferences & Speaking</h1>
+                  </div>
+                </div>
                 <p className="section-subtitle">
                   Academic symposiums, thesis defense presentations, workshops, and AI engineering community discussions.
                 </p>
