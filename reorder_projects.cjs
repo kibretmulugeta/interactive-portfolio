@@ -42,11 +42,14 @@ async function run() {
     // Find CCTV Project
     const cctvProject = projects.find(p => p.title && p.title.toLowerCase().includes('cctv'));
 
+    // Find TSP Project
+    const tspProject = projects.find(p => p.title && (p.title.toLowerCase().includes('tsp') || p.title.toLowerCase().includes('traveling salesman')));
+
     // Other projects
     const otherProjects = projects.filter(p => {
       if (!p.title) return false;
       const t = p.title.toLowerCase();
-      if (t.includes('chat') || t.includes('digital twin') || t.includes('dsm-5') || t.includes('psychiatry') || t.includes('apparent') || t.includes('apartment') || t.includes('cctv')) return false;
+      if (t.includes('chat') || t.includes('digital twin') || t.includes('dsm-5') || t.includes('psychiatry') || t.includes('apparent') || t.includes('apartment') || t.includes('cctv') || t.includes('tsp') || t.includes('traveling salesman')) return false;
       return true;
     });
 
@@ -55,6 +58,7 @@ async function run() {
     if (dsm5Project) orderedProjects.push(dsm5Project);
     if (apparentProject) orderedProjects.push(apparentProject);
     if (cctvProject) orderedProjects.push(cctvProject);
+    if (tspProject) orderedProjects.push(tspProject);
     orderedProjects.push(...otherProjects);
 
     const result = await ProfileConfig.updateOne(
