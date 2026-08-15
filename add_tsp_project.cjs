@@ -29,8 +29,8 @@ async function addProject() {
       description: 'Implemented optimization algorithms (Evolutionary, Metaheuristic, AI Optimization) for solving the NP-hard TSP.',
       image: '/assets/images/tsp_optimization.png',
       tags: ['Evolutionary Algorithms', 'Metaheuristic', 'AI Optimization'],
-      liveUrl: '#',
-      githubUrl: 'https://github.com/kibretmulugeta'
+      liveUrl: 'https://traveling-salesman-problem-tsp.vercel.app/',
+      githubUrl: 'https://github.com/kibretmulugeta/Traveling-Salesman-Problem-TSP-'
     };
 
     const exists = config.projects.find(p => p.title === newProject.title);
