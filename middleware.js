@@ -2,13 +2,19 @@ import { withMiddlewareAuthRequired } from '@auth0/nextjs-auth0/edge';
 import { NextResponse } from 'next/server';
 
 export default function middleware(req) {
-  // Check if Auth0 environment variables are present on Edge runtime
-  if (!process.env.AUTH0_SECRET || !process.env.AUTH0_BASE_URL) {
-    console.warn('Auth0 Environment Variables (AUTH0_SECRET or AUTH0_BASE_URL) missing in Middleware.');
-    // Redirect to login fallback gracefully
-    const loginUrl = new URL('/api/auth/login', req.url);
-    loginUrl.searchParams.set('returnTo', req.nextUrl.pathname);
-    return NextResponse.redirect(loginUrl);
+  // Dynamically set AUTH0_BASE_URL on Edge runtime if missing
+  if (!process.env.AUTH0_BASE_URL) {
+    if (process.env.VERCEL_URL) {
+      process.env.AUTH0_BASE_URL = `https://${process.env.VERCEL_URL}`;
+    } else if (req.nextUrl && req.nextUrl.origin) {
+      process.env.AUTH0_BASE_URL = req.nextUrl.origin;
+    }
+  }
+
+  // Check if Auth0 environment secret is configured
+  if (!process.env.AUTH0_SECRET) {
+    console.warn('Auth0 AUTH0_SECRET is missing in Middleware runtime.');
+    return NextResponse.next();
   }
 
   try {
@@ -16,12 +22,12 @@ export default function middleware(req) {
     return authMiddleware(req);
   } catch (error) {
     console.error('Middleware Auth0 error:', error);
-    const loginUrl = new URL('/api/auth/login', req.url);
-    return NextResponse.redirect(loginUrl);
+    return NextResponse.next();
   }
 }
 
 export const config = {
   matcher: ['/contracting', '/contracting/:path*'],
 };
+
 
