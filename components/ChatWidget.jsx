@@ -22,7 +22,8 @@ export default function ChatWidget() {
                                                 theme: 'dark',
                                                 position: 'bottom-right',
                                                 primaryColor: '#6366f1',
-                                                welcomeMessage: "Hello! I am Alemu's AI Digital Twin. Ask me anything about Alemu's research, skills, projects, or experience!"
+                                                welcomeMessage: "Hello! I am Kibret Mulugeta's AI Digital Twin. Ask me anything about Kibret's research, skills, projects, or experience!"
+
                                     });
                           }
                   };
