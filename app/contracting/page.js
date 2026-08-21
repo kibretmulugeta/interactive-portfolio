@@ -139,12 +139,40 @@ function ContractingContent() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="contact-form">
-              {statusMessage && statusMessage.type === 'error' && (
-                <div style={{ padding: '1rem', background: 'rgba(239, 68, 68, 0.15)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '10px', color: '#ef4444', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <AlertTriangle size={18} />
-                  <span>{statusMessage.text}</span>
+              {!user && (
+                <div style={{ padding: '1.2rem', background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.3)', borderRadius: '12px', color: 'var(--text-primary)', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+                  <div>
+                    <strong style={{ display: 'block', fontSize: '1rem', marginBottom: '0.25rem' }}>Authentication Required</strong>
+                    <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Please sign in via Auth0 / Google to initiate a project proposal.</p>
+                  </div>
+                  <a
+                    href={`/api/auth/login?returnTo=${encodeURIComponent(preselectedProject ? `/contracting?project=${encodeURIComponent(preselectedProject)}` : '/contracting')}`}
+                    className="pill-btn"
+                    style={{ background: 'var(--accent-color)', color: '#ffffff', textDecoration: 'none', padding: '0.55rem 1.25rem', fontSize: '0.9rem', whiteSpace: 'nowrap' }}
+                  >
+                    Sign In to Continue
+                  </a>
                 </div>
               )}
+
+              {statusMessage && statusMessage.type === 'error' && (
+                <div style={{ padding: '1rem 1.25rem', background: 'rgba(239, 68, 68, 0.15)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '10px', color: '#ef4444', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <AlertTriangle size={18} />
+                    <span>{statusMessage.text}</span>
+                  </div>
+                  {statusMessage.text.toLowerCase().includes('sign in') && (
+                    <a
+                      href={`/api/auth/login?returnTo=${encodeURIComponent(preselectedProject ? `/contracting?project=${encodeURIComponent(preselectedProject)}` : '/contracting')}`}
+                      className="pill-btn"
+                      style={{ background: '#ef4444', color: '#ffffff', textDecoration: 'none', padding: '0.4rem 1rem', fontSize: '0.85rem' }}
+                    >
+                      Sign In Now
+                    </a>
+                  )}
+                </div>
+              )}
+
 
               <div className="form-grid">
                 <div className="form-group">
