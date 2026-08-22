@@ -16,7 +16,6 @@ const ContractInquirySchema = new mongoose.Schema(
     projectType: {
       type: String,
       required: [true, 'Please select a project type.'],
-      enum: ['U-Net Brain MRI Segmentation', 'Medical Imaging Pipeline', 'Neural Plasticity Algorithm', 'Custom AI Consulting'],
       default: 'Custom AI Consulting',
     },
     budget: {

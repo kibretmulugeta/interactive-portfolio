@@ -27,7 +27,7 @@ export default function middleware(req) {
 }
 
 export const config = {
-  matcher: ['/contracting', '/contracting/:path*'],
+  matcher: [],
 };
 
 

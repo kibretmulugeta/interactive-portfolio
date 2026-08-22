@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import ProfileConfig from '@/models/ProfileConfig';
+import { defaultProjects } from '@/lib/projects';
 
 export const defaultProfileData = {
   hero: {

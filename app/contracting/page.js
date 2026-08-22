@@ -24,6 +24,9 @@ function ContractingContent() {
   const [statusMessage, setStatusMessage] = useState(null);
   const [submittedInquiry, setSubmittedInquiry] = useState(null);
 
+  const [userInquiries, setUserInquiries] = useState([]);
+  const [loadingUserInquiries, setLoadingUserInquiries] = useState(false);
+
   // Fetch dynamic projects list from API profile
   useEffect(() => {
     async function loadProjects() {
@@ -53,6 +56,23 @@ function ContractingContent() {
     loadProjects();
   }, [preselectedProject]);
 
+  // Fetch logged-in user's existing contract proposals
+  const fetchUserInquiries = async () => {
+    if (!user) return;
+    setLoadingUserInquiries(true);
+    try {
+      const res = await fetch('/api/contracting');
+      if (res.ok) {
+        const data = await res.json();
+        setUserInquiries(data.data || []);
+      }
+    } catch (err) {
+      console.error('Error fetching user inquiries:', err);
+    } finally {
+      setLoadingUserInquiries(false);
+    }
+  };
+
   useEffect(() => {
     if (user) {
       setFormData(prev => ({
@@ -60,6 +80,7 @@ function ContractingContent() {
         clientName: user.name || prev.clientName,
         clientEmail: user.email || prev.clientEmail,
       }));
+      fetchUserInquiries();
     }
   }, [user]);
 
@@ -88,10 +109,24 @@ function ContractingContent() {
 
       setSubmittedInquiry(result.inquiry);
       setStatusMessage({ type: 'success', text: 'Contract proposal submitted successfully! Kibret will review your project requirements.' });
+      fetchUserInquiries();
     } catch (err) {
       setStatusMessage({ type: 'error', text: err.message });
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case 'accepted':
+        return <span className="pill-badge" style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.3)' }}>Accepted</span>;
+      case 'reviewed':
+        return <span className="pill-badge" style={{ background: 'rgba(59, 130, 246, 0.15)', color: '#3b82f6', border: '1px solid rgba(59, 130, 246, 0.3)' }}>Under Review</span>;
+      case 'rejected':
+        return <span className="pill-badge" style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.3)' }}>Declined</span>;
+      default:
+        return <span className="pill-badge" style={{ background: 'rgba(234, 179, 8, 0.15)', color: '#d97706', border: '1px solid rgba(234, 179, 8, 0.3)' }}>Pending Review</span>;
     }
   };
 
@@ -116,6 +151,48 @@ function ContractingContent() {
             Welcome{user?.name ? `, ${user.name}` : ''}. Select a project specialty from the portfolio directory below or outline custom AI architecture requirements.
           </p>
         </div>
+
+        {/* Existing User Proposals Tracking Section */}
+        {user && userInquiries.length > 0 && (
+          <div style={{ maxWidth: '800px', margin: '0 auto 2.5rem auto' }}>
+            <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <FileText size={20} style={{ color: 'var(--accent-light)' }} />
+              <span>Your Active Proposals & Contract Status ({userInquiries.length})</span>
+            </h2>
+            <div style={{ display: 'grid', gap: '1rem' }}>
+              {userInquiries.map((inquiry) => (
+                <div
+                  key={inquiry._id}
+                  className="card"
+                  style={{
+                    padding: '1.25rem 1.5rem',
+                    borderRadius: '14px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.75rem',
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <div>
+                      <strong style={{ fontSize: '1.05rem', color: 'var(--text-primary)' }}>{inquiry.projectType}</strong>
+                      <span style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                        Submitted on {new Date(inquiry.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+                      </span>
+                    </div>
+                    {getStatusBadge(inquiry.status)}
+                  </div>
+                  <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', margin: 0, lineHeight: '1.5' }}>
+                    {inquiry.description}
+                  </p>
+                  <div style={{ display: 'flex', gap: '1rem', fontSize: '0.85rem', color: 'var(--text-secondary)', borderTop: '1px dashed var(--badge-border)', paddingTop: '0.5rem' }}>
+                    <span>Budget: <strong>{inquiry.budget}</strong></span>
+                    <span>Ref ID: <code>{inquiry._id}</code></span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="card" style={{ maxWidth: '800px', margin: '0 auto', padding: '2.5rem', borderRadius: '20px' }}>
           {submittedInquiry ? (
